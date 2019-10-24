@@ -1,5 +1,5 @@
-import matplotlib
-matplotlib.use('Agg')
+# import matplotlib
+# matplotlib.use('Agg')
 
 import tensorflow as tf
 import numpy as np
@@ -13,14 +13,14 @@ import cv2
 from scipy.sparse import linalg
 
 # ================================================================================
-EPSILON = 0.05
+EPSILON_MNIST, EPSILON_CIFAR = 0.15, 0.05
 MAX_TRAIN_ITER = 5000
 BATCH_SIZE = 256
 MNIST_LR, CIFAR_LR, META_LR = 8e-4, 2e-4, 1e-4
 ADV_MNIST_LR, ADV_CIFAR_LR = 8e-5, 2e-5
 META_SAVE_DIR = './meta_train/'
 ADV_SAVE_DIR = './adv_train/'
-TEST_MODE = True
+TEST_MODE = False
 # ================================================================================
 
 class cifar10Reader(object):
@@ -128,8 +128,7 @@ def fgsm_op(input_op, loss_op, epsilon=0.05):
     """
     adv_perturb = tf.gradients(loss_op, input_op)[0]
     adv_perturb = tf.reshape(adv_perturb, [-1, 32 * 32 * 3])
-    norm_adv_perturb = tf.sign(tf.nn.l2_normalize(adv_perturb, axis=-1))
-    norm_adv_perturb = tf.reshape(norm_adv_perturb, [-1, 32, 32, 3])
+    norm_adv_perturb = tf.reshape(tf.sign(adv_perturb), [-1, 32, 32, 3])
     return tf.stop_gradient(input_op + epsilon * norm_adv_perturb)
 
 
@@ -187,15 +186,17 @@ class MetaModelBase(object):
 
 
 class MetaModel(MetaModelBase):
-    def __init__(self):
+    def __init__(self, scope):
         super(MetaModel, self).__init__()
-        self.meta = build_network(self.input_xs, scope='meta', reuse=False)
-        self.mnist_adapt = build_network(self.mnist_input_xs, scope='mnist', reuse=False)
-        self.cifar_adapt = build_network(self.cifar_input_xs, scope='cifar', reuse=False)
-        
-        meta_vars = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope='meta')
-        mnist_vars = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope='mnist')
-        cifar_vars = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope='cifar')
+
+        with tf.variable_scope(scope, reuse=tf.AUTO_REUSE):
+            self.meta = build_network(self.input_xs, scope='meta', reuse=False)
+            self.mnist_adapt = build_network(self.mnist_input_xs, scope='mnist', reuse=False)
+            self.cifar_adapt = build_network(self.cifar_input_xs, scope='cifar', reuse=False)
+            
+        meta_vars = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope=scope + '/meta')
+        mnist_vars = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope=scope + '/mnist')
+        cifar_vars = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope=scope + '/cifar')
         meta_vars.sort(key=lambda x: x.name)
         mnist_vars.sort(key=lambda x: x.name)
         cifar_vars.sort(key=lambda x: x.name)
@@ -248,15 +249,17 @@ class MetaModel(MetaModelBase):
 
 
 class AdvMetaModel(MetaModelBase):
-    def __init__(self):
+    def __init__(self, scope):
         super(AdvMetaModel, self).__init__()
-        self.meta = build_network(self.input_xs, scope='meta', reuse=False)
-        self.mnist_adapt = build_network(self.mnist_input_xs, scope='mnist', reuse=False)
-        self.cifar_adapt = build_network(self.cifar_input_xs, scope='cifar', reuse=False)
 
-        meta_vars = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope='meta')
-        mnist_vars = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope='mnist')
-        cifar_vars = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope='cifar')
+        with tf.variable_scope(scope):
+            self.meta = build_network(self.input_xs, scope='meta', reuse=False)
+            self.mnist_adapt = build_network(self.mnist_input_xs, scope='mnist', reuse=False)
+            self.cifar_adapt = build_network(self.cifar_input_xs, scope='cifar', reuse=False)
+
+        meta_vars = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope=scope + '/meta')
+        mnist_vars = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope=scope + '/mnist')
+        cifar_vars = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope=scope + '/cifar')
         print(' [*] Number of vars: MNIST: {}, CIFAR: {}'.format(len(mnist_vars), len(cifar_vars)))
 
         mnist_pred = tf.argmax(self.mnist_adapt, axis=-1, output_type=tf.int32)
@@ -272,10 +275,11 @@ class AdvMetaModel(MetaModelBase):
         cifar_loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=self.cifar_input_ys, logits=self.cifar_adapt)
         mnist_loss, cifar_loss = tf.reduce_mean(mnist_loss), tf.reduce_mean(cifar_loss)
 
-        self.mnist_adv_examples = fgsm_op(self.mnist_input_xs, mnist_loss, epsilon=EPSILON)
-        self.cifar_adv_examples = fgsm_op(self.cifar_input_xs, cifar_loss, epsilon=EPSILON)
-        adv_mnist_adapt = build_network(self.mnist_adv_examples, scope='mnist', reuse=True)
-        adv_cifar_adapt = build_network(self.cifar_adv_examples, scope='cifar', reuse=True)
+        self.mnist_adv_examples = fgsm_op(self.mnist_input_xs, mnist_loss, epsilon=EPSILON_MNIST)
+        self.cifar_adv_examples = fgsm_op(self.cifar_input_xs, cifar_loss, epsilon=EPSILON_CIFAR)
+        with tf.variable_scope(scope):
+            adv_mnist_adapt = build_network(self.mnist_adv_examples, scope='mnist', reuse=True)
+            adv_cifar_adapt = build_network(self.cifar_adv_examples, scope='cifar', reuse=True)
         with tf.name_scope('adversarial'):
             adv_mnist_loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=self.mnist_input_ys, logits=adv_mnist_adapt)
             adv_cifar_loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=self.cifar_input_ys, logits=adv_cifar_adapt)
@@ -320,7 +324,7 @@ class AdvMetaModel(MetaModelBase):
         self.sess = tf.InteractiveSession(config=config)
         #self.sess = tf.Session()
         tf.global_variables_initializer().run(session=self.sess)
-        print(' [*] Build meta model')
+        print(' [*] Build adv meta model')
 
     def single_step_update(self):
         self.sess.run(self.assign_mnist)
@@ -338,6 +342,22 @@ class AdvMetaModel(MetaModelBase):
         self.sess.run(self.meta_optim, feed_dict=mnist_feed)
         self.sess.run(self.adv_meta_optim, feed_dict=mnist_feed)
 
+    def evaluate_mnist(self):
+        mapval_list = []
+        for it in range(100):
+            mnist_xs, mnist_ys = mnist_reader.test_batch(100)
+            mapval = self.sess.run(self.adv_mnist_map, feed_dict={self.mnist_input_xs: mnist_xs, self.mnist_input_ys: mnist_ys})
+            mapval_list.append(mapval)
+        return np.array(mapval_list, dtype=np.float32).mean()
+
+    def evaluate_cifar(self):
+        mapval_list = []
+        for it in range(100):
+            cifar_xs, cifar_ys = cifar_reader.test_batch(it * 64, (it + 1) * 64)
+            mapval = self.sess.run(self.adv_cifar_map, feed_dict={self.cifar_input_xs: cifar_xs, self.cifar_input_ys: cifar_ys})
+            mapval_list.append(mapval)
+        return np.array(mapval_list, dtype=np.float32).mean()
+
 
 if __name__ == '__main__':
     if TEST_MODE:
@@ -352,10 +372,10 @@ if __name__ == '__main__':
         cifar_feed = {model.cifar_input_xs: xss, model.cifar_input_ys: yss}
         mnist_adv_xs = model.sess.run(model.mnist_adv_examples, feed_dict=mnist_feed)
         cifar_adv_xs = model.sess.run(model.cifar_adv_examples, feed_dict=cifar_feed)
-        mnist_feed[model.mnist_input_xs] = mnist_adv_xs
-        cifar_feed[model.cifar_input_xs] = cifar_adv_xs
-        mnist_map = model.sess.run(model.mnist_map, feed_dict=mnist_feed)
-        cifar_map = model.sess.run(model.cifar_map, feed_dict=cifar_feed)
+        # mnist_feed[model.mnist_input_xs] = mnist_adv_xs
+        # cifar_feed[model.cifar_input_xs] = cifar_adv_xs
+        mnist_map = model.sess.run(model.adv_mnist_map, feed_dict=mnist_feed)
+        cifar_map = model.sess.run(model.adv_cifar_map, feed_dict=cifar_feed)
 
         print(' [*]', mnist_adv_xs.shape, mnist_adv_xs.min(), mnist_adv_xs.max())
         print(' [*]', cifar_adv_xs.shape, cifar_adv_xs.min(), cifar_adv_xs.max())
@@ -363,28 +383,33 @@ if __name__ == '__main__':
         plt.figure()
         plt.subplot(221)
         plt.imshow(xs[0])
+        plt.axis('off')
         plt.subplot(222)
         plt.title('mAP: {}'.format(mnist_map))
         plt.imshow(mnist_adv_xs[0])
+        plt.axis('off')
         plt.subplot(223)
         plt.imshow(xss[0])
+        plt.axis('off')
         plt.subplot(224)
         plt.imshow(cifar_adv_xs[0])
         plt.title('mAP: {}'.format(cifar_map))
+        plt.axis('off')
+        plt.savefig('./images/test_image.png')
         plt.show()
 
         exit(0)
 
-    else:
-        with tf.variable_scope('meta-learning'):
-            meta_medel = MetaModel()
-        with tf.variable_scope('adv-meta-learning'):
-            adv_meta_model = AdvMetaModel()
+
+    # Training
+    meta_model = MetaModel('meta-learning')
+    adv_meta_model = AdvMetaModel('adv-meta-learning')
 
     meta_model.load_state(META_SAVE_DIR)
     adv_meta_model.load_state(ADV_SAVE_DIR)
 
     mnist_summaries, cifar_summaries = [], []
+    adv_mnist_summaries, adv_cifar_summaries = [], []
     x_steps = list(range(0, MAX_TRAIN_ITER, 100))
     for idx in range(MAX_TRAIN_ITER):
         meta_model.single_step_update()
@@ -394,19 +419,24 @@ if __name__ == '__main__':
             #cifar_xs, cifar_ys = cifar_reader.test_batch(0, 512)
             mnist_map = meta_model.evaluate_mnist()
             cifar_map = meta_model.evaluate_cifar()
+            adv_mnist_map = adv_meta_model.evaluate_mnist()
+            adv_cifar_map = adv_meta_model.evaluate_cifar()
             mnist_summaries.append(mnist_map)
             cifar_summaries.append(cifar_map)
-            #mnist_map_train = meta_model.sess.run(meta_model.mnist_map, feed_dict={meta_model.input_xs: mnist_xs, meta_model.input_ys: mnist_ys})
-            #cifar_map_train = meta_model.sess.run(meta_model.cifar_map, feed_dict={meta_model.input_xs: cifar_xs, meta_model.input_ys: cifar_ys})
-            print('Iteration: {}, MNIST: {}, CIFAR-10: {}'.format(idx, mnist_map, cifar_map))
+            adv_mnist_summaries.append(adv_mnist_map)
+            adv_cifar_summaries.append(adv_cifar_map)
+            info_str = 'Iteration: {}, MNIST: normal {} adv {}, CIFAR-10: normal {} adv {}'
+            print(info_str.format(idx, mnist_map, adv_mnist_map, cifar_map, adv_cifar_map))
     meta_model.save_state(SAVE_DIR)
 
     plt.style.use('ggplot')
     #plt.figure()
     plt.plot(x_steps, mnist_summaries, linewidth=1.5)
     plt.plot(x_steps, cifar_summaries, linewidth=1.5)
-    plt.legend(['MNIST', 'CIFAR'], loc='best')
+    plt.plot(x_steps, adv_mnist_summaries, linewidth=1.5)
+    plt.plot(x_steps, adv_cifar_summaries, linewidth=1.5)
+    plt.legend(['MNIST', 'CIFAR', 'MNIST-adv', 'CIFAR-adv'], loc='best')
     plt.xlabel('Training iterations')
-    plt.ylabel('Precision on test set')
+    plt.ylabel('Precision')
     plt.savefig('./images/meta_training.png')
     #plt.show()
