@@ -20,7 +20,7 @@ def save_pbdata_samples():
     global replay_memory
     pbdata = request.data
     replay_memory.push(pbdata)
-    return 200
+    return '200'
 
 
 @app.route('/read', methods=['GET'])
@@ -33,9 +33,9 @@ def sample_batch():
     """
     global replay_memory
     if replay_memory.sample(G.BATCH_SIZE):
-        return 200
+        return '200'
     else:
-        return 404
+        return '404'
 
 
 @app.route('/stats', methods=['GET'])
@@ -43,8 +43,8 @@ def get_stat_info():
     global replay_memory
     jsoninfo = {
         'n_samples': replay_memory.num_samples, 
-        'num_read': replay_memory: num_read,
-        'num_write': replay_memory: num_write,
+        'num_read': replay_memory.num_read,
+        'num_write': replay_memory.num_write,
     }
     return jsonify(jsoninfo)
 
@@ -52,7 +52,10 @@ def get_stat_info():
 @app.route('/shminfo', methods=['GET'])
 def get_shminfo():
     global replay_memory
-    info = {'shmid': replay_memory.addinfo[0], 'offset': replay_memory.addinfo[1]}
+    info = {
+        'shmid': int(replay_memory.addinfo[0]), 
+        'offset': int(replay_memory.addinfo[1])
+    }
     return jsonify(info)
 
 
@@ -62,12 +65,17 @@ def server_prepare_close():
     Only be called when training is finished
     mempool server start to release and delete its shared memory
     """
-    pass
+    global replay_memory
+    try:
+        replay_memory.close()
+    except Exception as err:
+        return '404'
+    return '200'
 
  
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='mempool_server')
-    parser.add_argument('-p', '--port', default=20000, type=int, help='port')
+    parser.add_argument('-p', '--port', default=G.SERVER_PORT, type=int, help='port')
     parser.add_argument('-d', '--debug', action='store_true', default=False)
     args = parser.parse_args()
 

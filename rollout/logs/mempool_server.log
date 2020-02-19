@@ -1,2 +1,0 @@
-DEBUG:root:state_shape=(3,) action_shape=(1,) max_shm_bytes=5120 max_shm_bytes_rounded=16384
-DEBUG:root:shmid=3604492 offset=352

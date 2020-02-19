@@ -1,0 +1,237 @@
+[DEBUG][2020-02-19 21:44:07,552][replay_memory.py][__init__][41] state_shape=(3,) action_shape=(1,) max_shm_bytes=5120 max_shm_bytes_rounded=16384
+[DEBUG][2020-02-19 21:44:07,553][replay_memory.py][__init__][60] shmid=4653076 offset=3296
+[INFO][2020-02-19 21:44:07,560][_internal.py][_log][122]  * Running on http://0.0.0.0:20000/ (Press CTRL+C to quit)
+[INFO][2020-02-19 21:45:11,275][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:45:11] "[1m[35mPOST /save HTTP/1.1[0m" 500 -
+[DEBUG][2020-02-19 21:47:40,686][replay_memory.py][__init__][41] state_shape=(3,) action_shape=(1,) max_shm_bytes=5120 max_shm_bytes_rounded=16384
+[DEBUG][2020-02-19 21:47:40,687][replay_memory.py][__init__][60] shmid=4685844 offset=3664
+[INFO][2020-02-19 21:47:40,695][_internal.py][_log][122]  * Running on http://0.0.0.0:20000/ (Press CTRL+C to quit)
+[INFO][2020-02-19 21:47:46,029][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:47:46] "[1m[35mPOST /save HTTP/1.1[0m" 500 -
+[INFO][2020-02-19 21:47:47,087][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:47:47] "[1m[35mPOST /save HTTP/1.1[0m" 500 -
+[INFO][2020-02-19 21:47:48,147][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:47:48] "[1m[35mPOST /save HTTP/1.1[0m" 500 -
+[INFO][2020-02-19 21:47:49,206][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:47:49] "[1m[35mPOST /save HTTP/1.1[0m" 500 -
+[INFO][2020-02-19 21:47:50,266][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:47:50] "[1m[35mPOST /save HTTP/1.1[0m" 500 -
+[INFO][2020-02-19 21:47:51,324][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:47:51] "[1m[35mPOST /save HTTP/1.1[0m" 500 -
+[INFO][2020-02-19 21:47:52,384][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:47:52] "[1m[35mPOST /save HTTP/1.1[0m" 500 -
+[INFO][2020-02-19 21:47:53,445][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:47:53] "[1m[35mPOST /save HTTP/1.1[0m" 500 -
+[INFO][2020-02-19 21:47:54,504][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:47:54] "[1m[35mPOST /save HTTP/1.1[0m" 500 -
+[INFO][2020-02-19 21:47:55,562][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:47:55] "[1m[35mPOST /save HTTP/1.1[0m" 500 -
+[INFO][2020-02-19 21:48:11,354][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:48:11] "[1m[35mGET /close HTTP/1.1[0m" 500 -
+[DEBUG][2020-02-19 21:51:01,880][replay_memory.py][__init__][41] state_shape=(3,) action_shape=(1,) max_shm_bytes=5120 max_shm_bytes_rounded=16384
+[DEBUG][2020-02-19 21:51:01,881][replay_memory.py][__init__][60] shmid=4718612 offset=1232
+[INFO][2020-02-19 21:51:01,889][_internal.py][_log][122]  * Running on http://0.0.0.0:20000/ (Press CTRL+C to quit)
+[INFO][2020-02-19 21:51:07,381][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:51:07] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 21:51:08,445][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:51:08] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 21:51:09,508][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:51:09] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 21:51:10,572][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:51:10] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 21:51:11,634][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:51:11] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 21:51:12,698][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:51:12] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 21:51:13,762][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:51:13] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 21:51:14,824][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:51:14] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 21:51:15,888][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:51:15] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 21:51:16,949][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:51:16] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 21:52:00,297][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:52:00] "[1m[35mGET /close HTTP/1.1[0m" 500 -
+[DEBUG][2020-02-19 21:52:59,832][replay_memory.py][__init__][41] state_shape=(3,) action_shape=(1,) max_shm_bytes=5120 max_shm_bytes_rounded=16384
+[DEBUG][2020-02-19 21:52:59,833][replay_memory.py][__init__][60] shmid=4751380 offset=1232
+[INFO][2020-02-19 21:52:59,841][_internal.py][_log][122]  * Running on http://0.0.0.0:20000/ (Press CTRL+C to quit)
+[INFO][2020-02-19 21:53:04,624][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:53:04] "[37mGET /close HTTP/1.1[0m" 200 -
+[DEBUG][2020-02-19 21:54:20,778][replay_memory.py][__init__][41] state_shape=(3,) action_shape=(1,) max_shm_bytes=5120 max_shm_bytes_rounded=16384
+[DEBUG][2020-02-19 21:54:20,779][replay_memory.py][__init__][60] shmid=4784148 offset=1184
+[INFO][2020-02-19 21:54:20,785][_internal.py][_log][122]  * Running on http://0.0.0.0:20000/ (Press CTRL+C to quit)
+[INFO][2020-02-19 21:54:45,805][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:54:45] "[1m[35mGET /shminfo HTTP/1.1[0m" 500 -
+[DEBUG][2020-02-19 21:56:02,216][replay_memory.py][__init__][41] state_shape=(3,) action_shape=(1,) max_shm_bytes=5120 max_shm_bytes_rounded=16384
+[DEBUG][2020-02-19 21:56:02,217][replay_memory.py][__init__][60] shmid=4816916 offset=2832
+[INFO][2020-02-19 21:56:02,224][_internal.py][_log][122]  * Running on http://0.0.0.0:20000/ (Press CTRL+C to quit)
+[INFO][2020-02-19 21:56:04,371][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:56:04] "[37mGET /shminfo HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 21:56:32,279][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:56:32] "[37mGET /stats HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 21:56:42,687][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:56:42] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 21:56:43,747][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:56:43] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 21:56:44,805][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:56:44] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 21:56:45,853][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:56:45] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 21:56:46,913][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:56:46] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 21:56:47,973][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:56:47] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 21:56:49,034][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:56:49] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 21:56:50,094][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:56:50] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 21:56:51,153][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:56:51] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 21:56:52,214][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:56:52] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 21:57:02,902][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:57:02] "[37mGET /stats HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 21:58:14,769][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:58:14] "[37mGET /stats HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 21:58:57,675][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:58:57] "[37mGET /close HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 21:59:03,708][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:59:03] "[37mGET /stats HTTP/1.1[0m" 200 -
+[DEBUG][2020-02-19 21:59:45,170][replay_memory.py][__init__][41] state_shape=(3,) action_shape=(1,) max_shm_bytes=5120 max_shm_bytes_rounded=16384
+[DEBUG][2020-02-19 21:59:45,171][replay_memory.py][__init__][60] shmid=4849684 offset=2832
+[INFO][2020-02-19 21:59:45,178][_internal.py][_log][122]  * Running on http://0.0.0.0:20000/ (Press CTRL+C to quit)
+[INFO][2020-02-19 21:59:52,067][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:59:52] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 21:59:53,127][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:59:53] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 21:59:54,182][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:59:54] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 21:59:55,262][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:59:55] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 21:59:56,322][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:59:56] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 21:59:57,380][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:59:57] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 21:59:58,434][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:59:58] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 21:59:59,506][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 21:59:59] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:00:00,242][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:00:00] "[37mGET /stats HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:00:00,567][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:00:00] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:00:01,389][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:00:01] "[37mGET /stats HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:00:01,629][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:00:01] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:00:02,168][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:00:02] "[37mGET /stats HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:00:03,050][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:00:03] "[37mGET /stats HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:00:03,837][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:00:03] "[37mGET /stats HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:00:04,390][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:00:04] "[37mGET /stats HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:00:05,109][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:00:05] "[37mGET /stats HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:00:06,086][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:00:06] "[37mGET /stats HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:01:06,271][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:01:06] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:01:10,541][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:01:10] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:01:14,702][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:01:14] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:01:18,893][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:01:18] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:01:23,097][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:01:23] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:01:27,408][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:01:27] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:01:31,615][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:01:31] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:01:35,929][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:01:35] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:01:48,336][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:01:48] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:01:52,577][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:01:52] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:01:56,785][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:01:56] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:02:00,994][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:02:00] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:02:05,206][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:02:05] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:02:09,442][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:02:09] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:02:13,601][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:02:13] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:02:17,843][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:02:17] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:02:22,051][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:02:22] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:02:26,277][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:02:26] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:03:51,657][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:03:51] "[1m[35mGET /read HTTP/1.1[0m" 500 -
+[INFO][2020-02-19 22:04:08,999][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:04:08] "[37mGET /close HTTP/1.1[0m" 200 -
+[DEBUG][2020-02-19 22:06:19,291][replay_memory.py][__init__][41] state_shape=(3,) action_shape=(1,) max_shm_bytes=5120 max_shm_bytes_rounded=16384
+[DEBUG][2020-02-19 22:06:19,292][replay_memory.py][__init__][60] shmid=4882452 offset=128
+[INFO][2020-02-19 22:06:19,298][_internal.py][_log][122]  * Running on http://0.0.0.0:20000/ (Press CTRL+C to quit)
+[INFO][2020-02-19 22:06:29,643][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:06:29] "[1m[35mGET /read HTTP/1.1[0m" 500 -
+[INFO][2020-02-19 22:08:59,133][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:08:59] "[37mGET /close HTTP/1.1[0m" 200 -
+[DEBUG][2020-02-19 22:09:05,577][replay_memory.py][__init__][41] state_shape=(3,) action_shape=(1,) max_shm_bytes=5120 max_shm_bytes_rounded=16384
+[DEBUG][2020-02-19 22:09:05,578][replay_memory.py][__init__][60] shmid=4915220 offset=2064
+[INFO][2020-02-19 22:09:05,586][_internal.py][_log][122]  * Running on http://0.0.0.0:20000/ (Press CTRL+C to quit)
+[INFO][2020-02-19 22:09:17,011][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:09:17] "[1m[35mGET /read HTTP/1.1[0m" 500 -
+[INFO][2020-02-19 22:09:27,204][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:09:27] "[37mGET /close HTTP/1.1[0m" 200 -
+[DEBUG][2020-02-19 22:09:32,545][replay_memory.py][__init__][41] state_shape=(3,) action_shape=(1,) max_shm_bytes=5120 max_shm_bytes_rounded=16384
+[DEBUG][2020-02-19 22:09:32,546][replay_memory.py][__init__][60] shmid=4947988 offset=2832
+[INFO][2020-02-19 22:09:32,553][_internal.py][_log][122]  * Running on http://0.0.0.0:20000/ (Press CTRL+C to quit)
+[INFO][2020-02-19 22:09:59,510][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:09:59] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:10:00,068][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:10:00] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:10:00,629][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:10:00] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:10:01,188][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:10:01] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:10:01,752][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:10:01] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:10:02,312][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:10:02] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:10:02,876][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:10:02] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:10:03,450][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:10:03] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:10:04,010][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:10:04] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:10:04,570][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:10:04] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:10:05,130][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:10:05] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:10:05,692][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:10:05] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:10:06,252][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:10:06] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:10:06,841][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:10:06] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:10:07,405][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:10:07] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:10:07,965][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:10:07] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:10:08,524][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:10:08] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:10:09,117][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:10:09] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:10:09,705][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:10:09] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:10:10,266][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:10:10] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:10:18,107][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:10:18] "[37mGET /stats HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:10:22,286][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:10:22] "[37mGET /shminfo HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:10:33,200][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:10:33] "[1m[35mGET /read HTTP/1.1[0m" 500 -
+[INFO][2020-02-19 22:12:38,797][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:12:38] "[37mGET /close HTTP/1.1[0m" 200 -
+[DEBUG][2020-02-19 22:12:42,671][replay_memory.py][__init__][41] state_shape=(3,) action_shape=(1,) max_shm_bytes=5120 max_shm_bytes_rounded=16384
+[DEBUG][2020-02-19 22:12:42,672][replay_memory.py][__init__][60] shmid=4980756 offset=1152
+[INFO][2020-02-19 22:12:42,679][_internal.py][_log][122]  * Running on http://0.0.0.0:20000/ (Press CTRL+C to quit)
+[INFO][2020-02-19 22:12:48,412][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:12:48] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:12:48,970][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:12:48] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:12:49,529][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:12:49] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:12:50,090][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:12:50] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:12:50,647][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:12:50] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:12:51,204][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:12:51] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:12:51,762][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:12:51] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:12:52,322][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:12:52] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:12:52,882][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:12:52] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:12:53,441][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:12:53] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:12:53,998][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:12:53] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:12:54,557][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:12:54] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:12:55,116][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:12:55] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:12:55,676][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:12:55] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:12:56,237][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:12:56] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:12:56,796][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:12:56] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:12:57,355][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:12:57] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:12:57,925][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:12:57] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:12:58,483][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:12:58] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:12:59,043][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:12:59] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:12:59,217][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:12:59] "[37mGET /stats HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:13:03,581][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:13:03] "[37mGET /stats HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:13:04,642][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:13:04] "[37mGET /stats HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:13:14,115][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:13:14] "[1m[35mGET /read HTTP/1.1[0m" 500 -
+[INFO][2020-02-19 22:13:39,658][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:13:39] "[37mGET /close HTTP/1.1[0m" 200 -
+[DEBUG][2020-02-19 22:13:44,213][replay_memory.py][__init__][41] state_shape=(3,) action_shape=(1,) max_shm_bytes=5120 max_shm_bytes_rounded=16384
+[DEBUG][2020-02-19 22:13:44,214][replay_memory.py][__init__][60] shmid=5013524 offset=2704
+[INFO][2020-02-19 22:13:44,220][_internal.py][_log][122]  * Running on http://0.0.0.0:20000/ (Press CTRL+C to quit)
+[INFO][2020-02-19 22:13:47,797][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:13:47] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:13:48,355][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:13:48] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:13:48,915][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:13:48] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:13:49,474][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:13:49] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:13:49,843][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:13:49] "[37mGET /stats HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:13:50,032][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:13:50] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:13:50,520][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:13:50] "[37mGET /stats HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:13:50,596][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:13:50] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:13:51,154][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:13:51] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:13:51,478][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:13:51] "[37mGET /stats HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:13:51,713][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:13:51] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:13:52,223][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:13:52] "[37mGET /stats HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:13:52,276][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:13:52] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:13:52,785][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:13:52] "[37mGET /stats HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:13:52,838][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:13:52] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:13:53,395][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:13:53] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:13:53,435][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:13:53] "[37mGET /stats HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:13:53,952][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:13:53] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:13:54,083][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:13:54] "[37mGET /stats HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:13:54,513][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:13:54] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:13:54,777][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:13:54] "[37mGET /stats HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:13:55,071][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:13:55] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:13:55,604][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:13:55] "[37mGET /stats HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:13:55,633][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:13:55] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:13:56,192][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:13:56] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:13:56,750][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:13:56] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:13:57,308][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:13:57] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:13:57,737][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:13:57] "[37mGET /stats HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:13:57,868][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:13:57] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:13:58,429][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:13:58] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:13:58,670][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:13:58] "[37mGET /stats HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:14:28,770][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:14:28] "[37mGET /read HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:14:50,766][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:14:50] "[37mGET /close HTTP/1.1[0m" 200 -
+[DEBUG][2020-02-19 22:14:54,418][replay_memory.py][__init__][41] state_shape=(3,) action_shape=(1,) max_shm_bytes=5120 max_shm_bytes_rounded=16384
+[DEBUG][2020-02-19 22:14:54,419][replay_memory.py][__init__][60] shmid=5046292 offset=1280
+[INFO][2020-02-19 22:14:54,427][_internal.py][_log][122]  * Running on http://0.0.0.0:20000/ (Press CTRL+C to quit)
+[INFO][2020-02-19 22:14:57,064][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:14:57] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:14:57,623][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:14:57] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:14:58,148][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:14:58] "[37mGET /stats HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:14:58,184][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:14:58] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:14:58,744][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:14:58] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:14:58,808][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:14:58] "[37mGET /stats HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:14:59,301][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:14:59] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:14:59,382][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:14:59] "[37mGET /stats HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:14:59,860][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:14:59] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:15:00,417][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:15:00] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:15:00,975][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:15:00] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:15:01,474][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:15:01] "[37mGET /stats HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:15:01,532][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:15:01] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:15:02,088][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:15:02] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:15:02,646][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:15:02] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:15:03,203][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:15:03] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:15:03,760][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:15:03] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:15:04,318][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:15:04] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:15:04,874][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:15:04] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:15:05,084][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:15:05] "[37mGET /stats HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:15:05,431][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:15:05] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:15:05,988][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:15:05] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:15:06,238][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:15:06] "[37mGET /stats HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:15:06,544][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:15:06] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:15:07,103][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:15:07] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:15:07,423][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:15:07] "[37mGET /stats HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:15:07,656][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:15:07] "[37mPOST /save HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:15:08,257][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:15:08] "[37mGET /stats HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:15:17,302][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:15:17] "[37mGET /shminfo HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:15:24,613][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:15:24] "[37mGET /read HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:15:26,953][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:15:26] "[37mGET /read HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:15:28,890][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:15:28] "[37mGET /read HTTP/1.1[0m" 200 -
+[INFO][2020-02-19 22:15:43,740][_internal.py][_log][122] 127.0.0.1 - - [19/Feb/2020 22:15:43] "[37mGET /close HTTP/1.1[0m" 200 -

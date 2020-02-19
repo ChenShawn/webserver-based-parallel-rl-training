@@ -17,7 +17,7 @@ void init_shm(float* shmptr, int _shmsz, int _shmkey, int* additional) {
         exit(-1);
     }
     void *shm_start_addr = (void*)((char*)shmptr + getpagesize());
-    // NOTE: the addr of shmptr might have already been mapped in pgtable
+    // NOTE: the addr of shmptr may have already been mapped in pgtable
     // the flag SHM_REMAP enforces remapping, which is non-optional
     void *shared_ptr = (void*)shmat(shmid, shm_start_addr, SHM_RND|SHM_REMAP);
     if ((long long)shared_ptr == -1) {
@@ -26,7 +26,7 @@ void init_shm(float* shmptr, int _shmsz, int _shmkey, int* additional) {
         perror("shmat failed\n");
         exit(-1);
     }
-    printf("shmaddr: input %p output %p\n", shmptr, shared_ptr);
+    // printf("shmaddr: input %p output %p\n", shmptr, shared_ptr);
     additional[0] = shmid;
     additional[1] = (char*)shared_ptr - (char*)shmptr;
 }

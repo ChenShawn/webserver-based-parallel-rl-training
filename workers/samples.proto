@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+message Sample {
+  bytes state                   = 1;
+  bytes action                  = 2;
+  float reward_sum              = 3;
+  float reward                  = 4;
+}
+
+message Episode {
+    repeated Sample samples     = 1;
+}
