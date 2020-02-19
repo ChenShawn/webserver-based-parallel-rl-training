@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import request
+from flask import request, jsonify
 import argparse
 import sys
 sys.path.append("..")
@@ -32,18 +32,37 @@ def sample_batch():
     so that the Trainer can directly read shared memory to get a batch of samples.
     """
     global replay_memory
-    state, action, reward_sum = replay_memory.sample()
+    if replay_memory.sample(G.BATCH_SIZE):
+        return 200
+    else:
+        return 404
 
 
 @app.route('/stats', methods=['GET'])
 def get_stat_info():
-    return ''
-
-
-@app.route('./shmid', methods=['GET'])
-def get_shmid():
     global replay_memory
-    return replay_memory.shmid
+    jsoninfo = {
+        'n_samples': replay_memory.num_samples, 
+        'num_read': replay_memory: num_read,
+        'num_write': replay_memory: num_write,
+    }
+    return jsonify(jsoninfo)
+
+
+@app.route('/shminfo', methods=['GET'])
+def get_shminfo():
+    global replay_memory
+    info = {'shmid': replay_memory.addinfo[0], 'offset': replay_memory.addinfo[1]}
+    return jsonify(info)
+
+
+@app.route('/close', methods=['GET'])
+def server_prepare_close():
+    """server_prepare_close
+    Only be called when training is finished
+    mempool server start to release and delete its shared memory
+    """
+    pass
 
  
 if __name__ == '__main__':
