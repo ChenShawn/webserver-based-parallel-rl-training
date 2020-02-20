@@ -6,15 +6,33 @@ import sys, os
 import random
 import time
 import logging
+import torch
+import hashlib
+from functools import partial, reduce
+from collections import namedtuple
+import socket
 sys.path.append("..")
 
 import global_variables as G
 import samples_pb2 as pbfmt
+from models import sac
 
 
 logfmt = '[%(levelname)s][%(asctime)s][%(filename)s][%(funcName)s][%(lineno)d] %(message)s'
 logging.basicConfig(filename='./logs/workers.log', level=logging.DEBUG, format=logfmt)
 logger = logging.getLogger(__name__)
+device = torch.device('cpu')
+
+
+def md5sum(filename):
+    """md5sum
+    Equivalent to the `md5sum` cmd in Linux shell
+    """
+    with open(filename, 'rb') as f:
+        d = hashlib.md5()
+        for buf in iter(partial(f.read, 128), b''):
+            d.update(buf)
+    return d.hexdigest()
 
 
 class Worker(object):
@@ -23,77 +41,94 @@ class Worker(object):
         self.send_list = [addr + '/save' for addr in G.MEMPOOL_SERVER_LIST]
         self.max_episode_len = G.MAX_EPISODE_LEN
         self.gamma = G.GAMMA
+        self.num_samples, self.num_send, self.num_failed = 0, 0, 0
+        self.actor_md5sum, self.critic_md5sum = '', ''
+        ArgList = namedtuple('ArgList', 'lr hidden_size alpha policy')
+        arglist = ArgList(lr=G.LR, hidden_size=G.HIDDEN_SIZE, alpha=G.ALPHA, policy=G.POLICY_TYPE)
+        state_size = reduce(lambda x, y: x * y, G.STATE_SHAPE)
+        self.agent = sac.SAC(num_inputs=state_size, action_space=self.env.action_space, args=arglist)
+        logger.info('Worker initialized in {}'.format(socket.gethostbyname(socket.gethostname())))
 
 
-    def get_random_episode_data(self, reward_option=None):
+    def get_episode_data(self, reward_shaping=lambda x: x):
         """get_random_episode_data
-            Get a episode of samples where the actions are uniformly sampled
-            reward_option: 'GAE' or anything else, by default equivalent to GAE where lambda==1
-            return: [(s_0, a_0, r_0), (s_1, a_1, r_1), ...]
+            TODO: support multi-step Bellman error
+            Get an episode of samples
+            return: [(s_0, a_0, R_0), (s_1, a_1, R_1), ...]
         """
         s = self.env.reset()
-        done = False
-        epilen = 0
-        states, actions, rewards = [], [], []
+        done, epilen = False, 0
+        states, actions, masks, rewards = [], [], [], []
         while not done:
             # self.env.render()
-            a = self.env.action_space.sample()
+            if os.path.exists(G.ACTOR_FILENAME) and os.path.exists(G.CRITIC_FILENAME):
+                # if both ckpt files exist the models should have been loaded
+                state_batch = torch.FloatTensor(s).to(device).unsqueeze(0)
+                a = self.agent.policy.sample(state)
+            else:
+                a = self.env.action_space.sample()
             s_next, r, done, info = self.env.step(a)
+            mask = 1 if epilen == self.max_episode_len else float(not done)
             states.append(s.astype(np.float32))
             actions.append(a.astype(np.float32))
-            rewards.append(self.reward_shaping(r))
+            masks.append(float(mask))
+            rewards.append(reward_shaping(r))
             epilen += 1
-            if epilen > self.max_episode_len or done:
+            if epilen >= self.max_episode_len or done:
                 break
             s = s_next
-        if reward_option == 'GAE':
-            # TODO: implement GAE to reduce variance
-            raise NotImplementedError('GAE on developing...')
-        else:
-            reward_sum_list = []
-            rval = 0.0
-            for r in rewards[::-1]:
-                rval = self.gamma * rval + r
-                reward_sum_list.append(rval)
-            reward_sum_list = reward_sum_list[::-1]
+        reward_sum_list = []
+        next_states = states[1: ] + [s_next]
+        for s_next, m, r in zip(next_states, masks, rewards):
+            reward_sum = r + m * self.gamma * self.agent.get_value(s_next)
+            reward_sum_list.append(reward_sum)
+        reward_sum_list.append(rewards[-1])
         return states, actions, reward_sum_list
 
 
-    def get_episode_data(self):
-        return []
+    def check_reload(self):
+        actor_md5sum = md5sum(G.ACTOR_FILENAME)
+        critic_md5sum = md5sum(G.CRITIC_FILENAME)
+        if actor_md5sum == self.actor_md5sum and critic_md5sum == self.critic_md5sum:
+            return False
+        self.agent.load_model(actor_path=G.ACTOR_FILENAME, critic_path=G.CRITIC_FILENAME)
+        return True
 
 
-    def reward_shaping(self, r):
-        """reward_shaping
-            no reward shaping by default
-        """
-        return r
+    def send_data(self):
+        if os.path.exists(G.ACTOR_FILENAME) and os.path.exists(G.CRITIC_FILENAME):
+            self.check_reload()
+        states, actions, rewards = self.get_episode_data()
+        episode = pbfmt.Episode()
+        for s, a, r in zip(states, actions, rewards):
+            sample = episode.samples.add()
+            sample.state = s.tobytes()
+            sample.action = a.tobytes()
+            sample.reward_sum = r
+        pbdata = episode.SerializeToString()
+        remote = random.choice(self.send_list)
+        ret = requests.post(remote, data=pbdata)
+        if ret.status_code != 200:
+            logger.error("remote response error: " + str(ret))
+            self.num_failed += 1
+            return False
+        self.num_samples += len(rewards)
+        return True
 
 
-    def run(self, random_mode=False):
-        # while True:
-        for _ in range(20):
-            if random_mode:
-                states, actions, rewards = self.get_random_episode_data()
-            else:
-                states, actions, rewards = self.get_episode_data()
-            episode = pbfmt.Episode()
-            for s, a, r in zip(states, actions, rewards):
-                sample = episode.samples.add()
-                sample.state = s.tobytes()
-                sample.action = a.tobytes()
-                sample.reward_sum = r
-            pbdata = episode.SerializeToString()
-            remote = random.choice(self.send_list)
-            ret = requests.post(remote, data=pbdata)
-            if ret.status_code != 200:
-                logger.error("remote server response exception")
-            time.sleep(0.5)
+    def run(self):
+        # TODO: support dynamic maintainance of mempool server
+        while True:
+            try:
+                self.send_data()
+                self.num_send += 1
+            except Exception as err:
+                logger.error('Error: ' + str(err))
+                self.num_failed += 1
+                continue
+
 
 
 if __name__ == '__main__':
     worker = Worker()
-    worker.run(random_mode=True)
-
-    # s, a, r = worker.get_random_episode_data()
-    # print(s, a, r)
+    worker.run()

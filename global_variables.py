@@ -16,6 +16,11 @@ gc.collect()
 # training
 BATCH_SIZE = 256
 GAMMA = 0.99
+POLICY_TYPE = 'Gaussian'
+HIDDEN_SIZE = 256
+LR = 0.0003
+TAU = 0.005
+ALPHA = 0.2
 
 
 # replay memory
@@ -39,6 +44,8 @@ MEMPOOL_SERVER_LIST = [
     'http://localhost:{}'.format(SERVER_PORT),
 ]
 MAX_EPISODE_LEN = 1000
+ACTOR_FILENAME = './train/actor.pth'
+CRITIC_FILENAME = './train/critic.pth'
 
 
 if __name__ == '__main__':

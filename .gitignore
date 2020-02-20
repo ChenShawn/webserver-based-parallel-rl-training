@@ -1,4 +1,5 @@
-experiments
-.vscode
+experiments/
+.vscode/
 *.o
 *.so
+__pycache__/
