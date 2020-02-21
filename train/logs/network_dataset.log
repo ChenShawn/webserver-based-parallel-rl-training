@@ -1,0 +1,14 @@
+[DEBUG][2020-02-21 22:53:52,753][connectionpool.py][_new_conn][208] Starting new HTTP connection (1): localhost
+[DEBUG][2020-02-21 22:53:52,769][connectionpool.py][_make_request][396] http://localhost:20000 "GET /shminfo HTTP/1.1" 200 43
+[DEBUG][2020-02-21 22:54:34,888][connectionpool.py][_new_conn][208] Starting new HTTP connection (1): localhost
+[DEBUG][2020-02-21 22:54:34,900][connectionpool.py][_make_request][396] http://localhost:20000 "GET /shminfo HTTP/1.1" 200 43
+[DEBUG][2020-02-21 22:54:56,006][connectionpool.py][_new_conn][208] Starting new HTTP connection (1): localhost
+[DEBUG][2020-02-21 22:54:56,026][connectionpool.py][_make_request][396] http://localhost:20000 "GET /shminfo HTTP/1.1" 200 43
+[DEBUG][2020-02-21 22:54:56,029][network_dataset.py][__init__][60] remote=http://localhost:20000/read shmid=27262992 offset=3568
+[INFO][2020-02-21 22:54:56,029][network_dataset.py][__init__][61] network_dataset initialized!
+[DEBUG][2020-02-21 22:55:11,110][connectionpool.py][_new_conn][208] Starting new HTTP connection (1): localhost
+[DEBUG][2020-02-21 22:55:11,120][connectionpool.py][_make_request][396] http://localhost:20000 "GET /shminfo HTTP/1.1" 200 43
+[DEBUG][2020-02-21 22:55:11,121][network_dataset.py][__init__][60] remote=http://localhost:20000/read shmid=27262992 offset=3568
+[INFO][2020-02-21 22:55:11,122][network_dataset.py][__init__][61] network_dataset initialized!
+[DEBUG][2020-02-21 22:55:11,124][connectionpool.py][_new_conn][208] Starting new HTTP connection (1): localhost
+[DEBUG][2020-02-21 22:55:11,129][connectionpool.py][_make_request][396] http://localhost:20000 "GET /read HTTP/1.1" 200 3

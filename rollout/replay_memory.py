@@ -51,7 +51,7 @@ class ReplayMemory(object):
         c_shm_bytes = ct.c_int(G.MAX_SHM_BYTES)
         c_shmkey = ct.c_int(G.SHMKEY)
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-        self.dll = np.ctypeslib.load_library(os.path.join(BASE_DIR, G.DLLNAME), '.')
+        self.dll = np.ctypeslib.load_library(os.path.join(BASE_DIR, G.REPLAY_DLLNAME), '.')
         self.dll.init_shm(c_shmbuf, c_shm_bytes, c_shmkey, c_addinfo)
         # addinfo[2] = STATE_DIMS, addinfo[3] = ACTION_DIMS, addinfo[4] = BATCH_SIZE
         self.addinfo[2] = reduce(lambda x, y: x * y, G.STATE_SHAPE)

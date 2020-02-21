@@ -63,10 +63,9 @@ class Worker(object):
             # self.env.render()
             if os.path.exists(G.ACTOR_FILENAME) and os.path.exists(G.CRITIC_FILENAME):
                 # if both ckpt files exist the models should have been loaded
-                state_batch = torch.FloatTensor(s).to(device).unsqueeze(0)
-                a = self.agent.policy.sample(state)
+                a = self.agent.select_action(s)
             else:
-                a = self.env.action_space.sample()
+                a = self.env.action_space.sample()[0]
             s_next, r, done, info = self.env.step(a)
             mask = 1 if epilen == self.max_episode_len else float(not done)
             states.append(s.astype(np.float32))
@@ -89,9 +88,13 @@ class Worker(object):
     def check_reload(self):
         actor_md5sum = md5sum(G.ACTOR_FILENAME)
         critic_md5sum = md5sum(G.CRITIC_FILENAME)
-        if actor_md5sum == self.actor_md5sum and critic_md5sum == self.critic_md5sum:
+        if actor_md5sum != self.actor_md5sum and critic_md5sum != self.critic_md5sum:
+            self.agent.load_model(actor_path=G.ACTOR_FILENAME, critic_path=G.CRITIC_FILENAME)
+            self.actor_md5sum = actor_md5sum
+            self.critic_md5sum = critic_md5sum
+            logger.info('new models confirmed and reload is now finished!')
+        else:
             return False
-        self.agent.load_model(actor_path=G.ACTOR_FILENAME, critic_path=G.CRITIC_FILENAME)
         return True
 
 
@@ -102,6 +105,10 @@ class Worker(object):
         episode = pbfmt.Episode()
         for s, a, r in zip(states, actions, rewards):
             sample = episode.samples.add()
+            # TODO: ONLY FOR DEBUG!!!
+            # sample.state = np.arange(s.shape[0], dtype=np.float32).tobytes()
+            # sample.action = np.arange(a.shape[0], dtype=np.float32).tobytes()
+            # sample.reward_sum = 3.1415926
             sample.state = s.tobytes()
             sample.action = a.tobytes()
             sample.reward_sum = r
@@ -119,6 +126,9 @@ class Worker(object):
     def run(self):
         # TODO: support dynamic maintainance of mempool server
         while True:
+            if self.num_failed > 20:
+                logger.error('error time reaches maximum threshold')
+                break
             try:
                 self.send_data()
                 self.num_send += 1
@@ -126,6 +136,7 @@ class Worker(object):
                 logger.error('Error: ' + str(err))
                 self.num_failed += 1
                 continue
+        exit(-1)
 
 
 

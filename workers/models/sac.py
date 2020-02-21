@@ -53,5 +53,5 @@ class SAC(object):
             actor_path = './train/actor.pth'
         if critic_path is None:
             critic_path = './train/critic.pth'
-        self.policy.load_state_dict(torch.load(actor_path))
-        self.critic.load_state_dict(torch.load(critic_path))
+        self.policy.load_state_dict(torch.load(actor_path, map_location=self.device))
+        self.critic.load_state_dict(torch.load(critic_path, map_location=self.device))

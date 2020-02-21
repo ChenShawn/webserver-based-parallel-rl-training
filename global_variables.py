@@ -4,16 +4,19 @@ from functools import reduce
 
 
 # environmental parameters
-ENV_NAME = 'Pendulum-v0'
+ENV_NAME = 'LunarLanderContinuous-v2'
 _env = gym.make(ENV_NAME)
 STATE_SHAPE = _env.observation_space.shape
 ACTION_SHAPE = _env.action_space.shape
+STATE_SIZE = reduce(lambda x, y: x * y, STATE_SHAPE)
+ACTION_SIZE = reduce(lambda x, y: x * y, ACTION_SHAPE)
 ACTION_RANGE = [_env.action_space.low[0], _env.action_space.high[0]]
 del _env
 gc.collect()
 
 
 # training
+# NOTE: note that the true batch_size used in training is BATCH_SIZE * len(MEMPOOL_SERVER_LIST)
 BATCH_SIZE = 256
 GAMMA = 0.99
 POLICY_TYPE = 'Gaussian'
@@ -34,7 +37,7 @@ if MAX_SHM_BYTES_ROUNDED % 4096 != 0:
     # rounded up to multiple times of pgsize
     MAX_SHM_BYTES_ROUNDED = MAX_SHM_BYTES + 2 * 4096 + (4096 - (MAX_SHM_BYTES % 4096))
 
-DLLNAME = 'libshm.so'
+REPLAY_DLLNAME = 'libshm.so'
 # NOTE: run `ipcs -m` to check whether conflict shmid exists
 SHMKEY = 654321
 
@@ -44,6 +47,7 @@ MEMPOOL_SERVER_LIST = [
     'http://localhost:{}'.format(SERVER_PORT),
 ]
 MAX_EPISODE_LEN = 1000
+TRAINER_DLLNAME = 'libtrain.so'
 ACTOR_FILENAME = './train/actor.pth'
 CRITIC_FILENAME = './train/critic.pth'
 
