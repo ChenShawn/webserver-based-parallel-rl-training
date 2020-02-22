@@ -11,6 +11,7 @@ import hashlib
 from functools import partial, reduce
 from collections import namedtuple
 import socket
+import threading
 sys.path.append("..")
 
 import global_variables as G
@@ -33,6 +34,35 @@ def md5sum(filename):
         for buf in iter(partial(f.read, 128), b''):
             d.update(buf)
     return d.hexdigest()
+
+
+class DownloadThread(threading.Thread):
+    def __init__(self):
+        super(DownloadThread, self).__init__()
+        self.flag_success = False
+
+    def run(self):
+        url = random.choice(G.MEMPOOL_SERVER_LIST) + '/send_model'
+        ret = requests.get(url + '/sac_actor.pth', stream=True)
+        if ret.status_code == 200:
+            with open(G.ACTOR_FILENAME, 'wb') as fd:
+                for chunk in ret.iter_content(chunk_size=128):
+                    if chunk:
+                        fd.write(chunk)
+        else:
+            self.flag_success = False
+            return self.flag_success
+        ret = requests.get(url + '/sac_critic.pth', stream=True)
+        if ret.status_code == 200:
+            with open(G.CRITIC_FILENAME, 'wb') as fd:
+                for chunk in ret.iter_content(chunk_size=128):
+                    if chunk:
+                        fd.write(chunk)
+        else:
+            self.flag_success = False
+            return self.flag_success
+        self.flag_success = True
+        return self.flag_success
 
 
 class Worker(object):
@@ -81,11 +111,12 @@ class Worker(object):
         for s_next, m, r in zip(next_states, masks, rewards):
             reward_sum = r + m * self.gamma * self.agent.get_value(s_next)
             reward_sum_list.append(reward_sum)
-        reward_sum_list.append(rewards[-1])
+        logger.info('epilen={} reward_sum={}'.format(len(states), sum(rewards)))
         return states, actions, reward_sum_list
 
 
     def check_reload(self):
+        """check_reload"""
         actor_md5sum = md5sum(G.ACTOR_FILENAME)
         critic_md5sum = md5sum(G.CRITIC_FILENAME)
         if actor_md5sum != self.actor_md5sum and critic_md5sum != self.critic_md5sum:
@@ -94,7 +125,11 @@ class Worker(object):
             self.critic_md5sum = critic_md5sum
             logger.info('new models confirmed and reload is now finished!')
         else:
-            return False
+            # NOTE: large files can cause long delay
+            # asynchronously requests mempool server for lastest models
+            download_thread = DownloadThread()
+            download_thread.start()
+            return download_thread.flag_success
         return True
 
 

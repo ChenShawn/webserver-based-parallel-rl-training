@@ -24,10 +24,14 @@ HIDDEN_SIZE = 256
 LR = 0.0003
 TAU = 0.005
 ALPHA = 0.2
+NUM_STEPS = 1000001
+SEED = 123456
+TARGET_UPDATE_INTERVAL = 5
+SAVE_INTERVAL = 10
 
 
 # replay memory
-SERVER_PORT = 20000
+SERVER_PORT_LIST = [20000, 20001, 20002, 20003]
 REPLAY_CAPACITY = 1e+6
 # NOTE: compute the smallest size that can contain a batch of samples and two more pages (4096)
 _num_float32 = reduce(lambda x, y: x * y, STATE_SHAPE) + reduce(lambda x, y: x * y, ACTION_SHAPE) + 1
@@ -43,13 +47,13 @@ SHMKEY = 654321
 
 
 # workers
-MEMPOOL_SERVER_LIST = [
-    'http://localhost:{}'.format(SERVER_PORT),
-]
+# NOTE: if worker processes run a different machines, each machine must share the same service ports
+MEMPOOL_SERVER_LIST = ['http://localhost:{}'.format(port) for port in SERVER_PORT_LIST]
+#MEMPOOL_SERVER_LIST += ['http://49.52.10.98:{}'.format(port) for port in SERVER_PORT_LIST]
 MAX_EPISODE_LEN = 1000
 TRAINER_DLLNAME = 'libtrain.so'
-ACTOR_FILENAME = './train/actor.pth'
-CRITIC_FILENAME = './train/critic.pth'
+ACTOR_FILENAME = './train/sac_actor.pth'
+CRITIC_FILENAME = './train/sac_critic.pth'
 
 
 if __name__ == '__main__':
