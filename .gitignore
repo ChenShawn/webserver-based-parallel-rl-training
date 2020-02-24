@@ -2,4 +2,6 @@ experiments/
 .vscode/
 *.o
 *.so
+*.pth
+*.log
 __pycache__/

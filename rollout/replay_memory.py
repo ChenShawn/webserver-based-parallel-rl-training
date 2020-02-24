@@ -16,7 +16,7 @@ import samples_pb2 as pbfmt
 
 
 logfmt = '[%(levelname)s][%(asctime)s][%(filename)s][%(funcName)s][%(lineno)d] %(message)s'
-logging.basicConfig(filename='./logs/replay_memory.log', level=logging.DEBUG, format=logfmt)
+logging.basicConfig(filename='./logs/replay_memory.log', level=logging.ERROR, format=logfmt)
 logger = logging.getLogger(__name__)
 
 

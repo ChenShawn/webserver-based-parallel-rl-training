@@ -2,8 +2,9 @@ import os
 import torch
 import torch.nn.functional as F
 from torch.optim import Adam
-from utils import soft_update, hard_update
-from model import GaussianPolicy, QNetwork, DeterministicPolicy
+
+from .utils import soft_update, hard_update
+from .model import GaussianPolicy, QNetwork, DeterministicPolicy
 
 
 class SAC(object):
@@ -52,7 +53,7 @@ class SAC(object):
 
     def update_parameters(self, dataset, updates):
         # Sample a batch from memory
-        state_batch, action_batch, reward_sum_batch = dataset.get_batch_data()
+        state_batch, action_batch, reward_batch = dataset.get_batch_data()
 
         state_batch = torch.FloatTensor(state_batch).to(self.device)
         action_batch = torch.FloatTensor(action_batch).to(self.device)
@@ -67,7 +68,8 @@ class SAC(object):
         qf1_pi, qf2_pi = self.critic(state_batch, pi)
         min_qf_pi = torch.min(qf1_pi, qf2_pi)
 
-        policy_loss = ((self.alpha * log_pi) - min_qf_pi).mean() # Jπ = 𝔼st∼D,εt∼N[α * logπ(f(εt;st)|st) − Q(st,f(εt;st))]
+        negative_entropy = self.alpha * log_pi
+        policy_loss = (negative_entropy - min_qf_pi).mean() # Jπ = 𝔼st∼D,εt∼N[α * logπ(f(εt;st)|st) − Q(st,f(εt;st))]
 
         self.critic_optim.zero_grad()
         qf1_loss.backward()
@@ -84,7 +86,7 @@ class SAC(object):
         if updates % self.target_update_interval == 0:
             soft_update(self.critic_target, self.critic, self.tau)
 
-        return qf1_loss.item(), qf2_loss.item(), policy_loss.item(), next_q_value.mean().item()
+        return qf1_loss.item(), qf2_loss.item(), policy_loss.item(), next_q_value.mean().item(), negative_entropy.mean()
 
 
     # Save model parameters
@@ -101,4 +103,4 @@ class SAC(object):
         torch.save(self.policy.state_dict(), actor_path)
         torch.save(self.critic.state_dict(), critic_path)
         # NOTE: critic_target must be saved!
-        torch.save(self.critic_target,state_dict(), critic_target_path)
+        torch.save(self.critic_target.state_dict(), critic_target_path)

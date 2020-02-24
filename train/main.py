@@ -28,15 +28,15 @@ def get_arguments():
     parser.add_argument('--max-episode-len', type=int, default=G.MAX_EPISODE_LEN, help='max episode len')
     parser.add_argument('--target-update-interval', type=int, default=G.TARGET_UPDATE_INTERVAL, help='Q-target update per steps')
     parser.add_argument('--save-interval', type=int, default=G.SAVE_INTERVAL, help='Q-target update per steps')
-    parser.add_argument('--log-interval', type=int, default=200, help='interval to write tensorboard')
+    parser.add_argument('--log-interval', type=int, default=100, help='interval to write tensorboard')
     parser.add_argument('--replay-size', type=int, default=G.REPLAY_CAPACITY, help='size of replay buffer')
     return parser.parse_args()
 
 
-def set_global_seeds(seed):
-    torch.manual_seed(args.seed)
-    np.random.seed(args.seed)
-    env.seed(args.seed)
+def set_global_seeds(_env, _seed):
+    torch.manual_seed(_seed)
+    np.random.seed(_seed)
+    _env.seed(_seed)
 
 
 def main():
@@ -45,22 +45,23 @@ def main():
     agent = sac.SAC(num_inputs=G.STATE_SIZE, action_space=env.action_space, args=args)
     env.close()
     dataset = NetworkDataset()
-    set_global_seeds(args.seed)
+    set_global_seeds(env, args.seed)
 
     logname  = './logs/{}.log'.format(args.env)
     logfmt = '%(levelname)s - %(asctime)s - %(message)s'
-    logging.basicConfig(filename=logname, level=logging.DEBUG, format=logfmt)
+    logging.basicConfig(filename=logname, level=logging.ERROR, format=logfmt)
     logger = logging.getLogger(__name__)
     writer = tf.summary.FileWriter('./tensorboard/')
 
     for total_it in range(args.num_steps):
-        qf1_loss, qf2_loss, policy_loss, reward_mean = agent.update_parameters(dataset, total_it)
+        qf1_loss, qf2_loss, policy_loss, reward_mean, negent = agent.update_parameters(dataset, total_it)
         if total_it % args.log_interval == 0:
             sumstr = tf.Summary(value=[
                 tf.Summary.Value(tag='loss/qloss_1', simple_value=qf1_loss),
                 tf.Summary.Value(tag='loss/qloss_2', simple_value=qf2_loss),
                 tf.Summary.Value(tag='loss/pi_loss', simple_value=policy_loss),
                 tf.Summary.Value(tag='agent/reward', simple_value=reward_mean),
+                tf.Summary.Value(tag='agent/negative_entropy', simple_value=negent),
             ])
             writer.add_summary(sumstr, global_step=total_it)
         if total_it % args.save_interval == 0:

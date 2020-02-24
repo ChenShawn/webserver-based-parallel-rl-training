@@ -1,9 +1,9 @@
 from flask import Flask
 from flask import request, jsonify, send_from_directory
 import argparse
-import sys
+import sys, os
 import hashlib
-from functools import reduce
+from functools import reduce, partial
 sys.path.append("..")
 
 import global_variables as G
@@ -90,9 +90,9 @@ def server_prepare_close():
 def send_latest_models(fname):
     """send_latest_models"""
     global md5_dict
-    if fname != 'sac_actor.pth' and fname != 'sac_critic.pth':
-        return 'Invalid fname input!', 403
-    filedir = '../train/train/'
+    if fname != 'sac_actor.pth' and fname != 'sac_critic_target.pth':
+        return 'Invalid fname input!', 500
+    filedir = '../train/train/{}/'.format(G.ENV_NAME)
     modelnames = os.listdir(filedir)
     if fname in modelnames:
         modeldir = os.path.join(filedir, fname)
@@ -101,20 +101,20 @@ def send_latest_models(fname):
             md5_dict[fname] = md5val
             return send_from_directory(filedir, fname, as_attachment=True), 200
         else:
-            return 'file not updated', 404
+            return 'file not updated', 601
     else:
-        return 'files not exists', 404
+        return 'files not exists', 602
     
 
  
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='mempool_server')
-    parser.add_argument('-p', '--port', default=G.SERVER_PORT, type=int, help='port')
+    parser.add_argument('-p', '--port', default=G.SERVER_PORT_LIST[0], type=int, help='port')
     parser.add_argument('-d', '--debug', action='store_true', default=False)
     args = parser.parse_args()
 
     # global variables for Flask server
     replay_memory = ReplayMemory(capacity=1e+6)
-    md5_dict = {'sac_actor.pth': '', 'sac_critic.pth': ''}
+    md5_dict = {'sac_actor.pth': '', 'sac_critic_target.pth': ''}
 
     app.run(host='0.0.0.0', port=args.port, debug=args.debug)

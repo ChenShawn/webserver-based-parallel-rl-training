@@ -20,7 +20,7 @@ from models import sac
 
 
 logfmt = '[%(levelname)s][%(asctime)s][%(filename)s][%(funcName)s][%(lineno)d] %(message)s'
-logging.basicConfig(filename='./logs/workers.log', level=logging.DEBUG, format=logfmt)
+logging.basicConfig(filename='./logs/workers.log', level=logging.INFO, format=logfmt)
 logger = logging.getLogger(__name__)
 device = torch.device('cpu')
 
@@ -37,6 +37,12 @@ def md5sum(filename):
 
 
 class DownloadThread(threading.Thread):
+    """DownloadThread
+    Models saving are running asynchronously to avoid long IO wait and delay
+    TODO: Requesting with stream=True avoid loading large file into memory at once.
+    However, when calling iter_content the remote file may have been modified,
+    resulting in empty or error model files.
+    """
     def __init__(self):
         super(DownloadThread, self).__init__()
         self.flag_success = False
@@ -52,7 +58,7 @@ class DownloadThread(threading.Thread):
         else:
             self.flag_success = False
             return self.flag_success
-        ret = requests.get(url + '/sac_critic.pth', stream=True)
+        ret = requests.get(url + '/sac_critic_target.pth', stream=True)
         if ret.status_code == 200:
             with open(G.CRITIC_FILENAME, 'wb') as fd:
                 for chunk in ret.iter_content(chunk_size=128):
@@ -111,7 +117,7 @@ class Worker(object):
         for s_next, m, r in zip(next_states, masks, rewards):
             reward_sum = r + m * self.gamma * self.agent.get_value(s_next)
             reward_sum_list.append(reward_sum)
-        logger.info('epilen={} reward_sum={}'.format(len(states), sum(rewards)))
+        logger.info('epilen={} reward_sum_mean={}'.format(len(states), np.array(rewards).mean()))
         return states, actions, reward_sum_list
 
 
@@ -124,7 +130,7 @@ class Worker(object):
             self.actor_md5sum = actor_md5sum
             self.critic_md5sum = critic_md5sum
             logger.info('new models confirmed and reload is now finished!')
-        else:
+        elif self.num_send % 20 == 0:
             # NOTE: large files can cause long delay
             # asynchronously requests mempool server for lastest models
             download_thread = DownloadThread()
@@ -141,12 +147,12 @@ class Worker(object):
         for s, a, r in zip(states, actions, rewards):
             sample = episode.samples.add()
             # TODO: ONLY FOR DEBUG!!!
-            # sample.state = np.arange(s.shape[0], dtype=np.float32).tobytes()
-            # sample.action = np.arange(a.shape[0], dtype=np.float32).tobytes()
-            # sample.reward_sum = 3.1415926
-            sample.state = s.tobytes()
-            sample.action = a.tobytes()
-            sample.reward_sum = r
+            sample.state = np.arange(s.shape[0], dtype=np.float32).tobytes()
+            sample.action = np.arange(a.shape[0], dtype=np.float32).tobytes()
+            sample.reward_sum = 3.1415926
+            # sample.state = s.tobytes()
+            # sample.action = a.tobytes()
+            # sample.reward_sum = r
         pbdata = episode.SerializeToString()
         remote = random.choice(self.send_list)
         ret = requests.post(remote, data=pbdata)
@@ -161,16 +167,18 @@ class Worker(object):
     def run(self):
         # TODO: support dynamic maintainance of mempool server
         while True:
-            if self.num_failed > 20:
-                logger.error('error time reaches maximum threshold')
-                break
-            try:
-                self.send_data()
-                self.num_send += 1
-            except Exception as err:
-                logger.error('Error: ' + str(err))
-                self.num_failed += 1
-                continue
+            # if self.num_failed > 20:
+            #     logger.error('error time reaches maximum threshold')
+            #     break
+            # try:
+            #     self.send_data()
+            #     self.num_send += 1
+            # except Exception as err:
+            #     logger.error('Error: ' + str(err))
+            #     self.num_failed += 1
+            #     continue
+            self.send_data()
+            self.num_send += 1
         exit(-1)
 
 

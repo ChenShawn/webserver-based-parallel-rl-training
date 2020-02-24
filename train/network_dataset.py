@@ -10,7 +10,7 @@ sys.path.append("..")
 import global_variables as G
 
 logfmt = '[%(levelname)s][%(asctime)s][%(filename)s][%(funcName)s][%(lineno)d] %(message)s'
-logging.basicConfig(filename='./logs/network_dataset.log', level=logging.DEBUG, format=logfmt)
+logging.basicConfig(filename='./logs/network_dataset.log', level=logging.ERROR, format=logfmt)
 logger = logging.getLogger(__name__)
 
 
@@ -101,6 +101,7 @@ class NetworkDataset(object):
 
 
 if __name__ == '__main__':
+    # unit test: this is to test if the data passed through shm are correct
     network_dataset = NetworkDataset()
     s, a, r = network_dataset.get_batch_data()
     print('state: ', s[0: 2, :], s.shape)
