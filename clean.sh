@@ -1,13 +1,18 @@
 set -x
 
-read -r -p "Warning: this script will rm all running results and log files in this dir. Confirm? [Y/n] " confirm
+read -r -p "Warning: this script will rm all running results and log files in this dir. Confirm? [Ctrl-C] " confirm
 
 rm ./rollout/logs/*
 rm ./workers/logs/*
+rm ./workers/train/*
 rm ./train/logs/*
 rm ./train/tensorboard/*
 rm ./train/nohup.out
-#rm -rf ./train/train/*
+envs=`ls ./train/train/`
+for env in ${envs}
+do
+    rm -rf ./train/train/${env}/*
+done
 
 source ./distributed.config
 worker_ending_index=`expr ${worker_num} - 1`

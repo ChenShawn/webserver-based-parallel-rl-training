@@ -44,14 +44,11 @@ class SAC(object):
         return min_qf_target.detach().cpu().numpy()[0]
 
     
-    def load_model(self, actor_path=None, critic_path=None):
+    def load_model(self, actor_path=None):
         """load_model
             Load model parameters
             Make sure the actor_path and critic_path are valid before loading
         """
         if actor_path is None:
             actor_path = './train/sac_actor.pth'
-        if critic_path is None:
-            critic_path = './train/sac_critic.pth'
         self.policy.load_state_dict(torch.load(actor_path, map_location=self.device))
-        self.critic.load_state_dict(torch.load(critic_path, map_location=self.device))

@@ -73,7 +73,8 @@ class ReplayMemory(object):
                 self.buffer.append(None)
             state = np.frombuffer(sample.state, dtype=np.float32).reshape(G.STATE_SHAPE)
             action = np.frombuffer(sample.action, dtype=np.float32).reshape(G.ACTION_SHAPE)
-            self.buffer[self.position] = (state, action, sample.reward_sum)
+            next_state = np.frombuffer(sample.next_state, dtype=np.float32).reshape(G.STATE_SHAPE)
+            self.buffer[self.position] = (state, action, sample.reward, next_state, sample.mask)
             self.position = int((self.position + 1) % self.capacity)
         self.num_samples += len(episode.samples)
         self.num_write += 1
@@ -95,16 +96,20 @@ class ReplayMemory(object):
 
         # read samples from Python list buffer and map it to fill shm
         batch = random.sample(self.buffer, batch_size)
-        state, action, reward_sum = map(np.stack, zip(*batch))
+        state, action, reward, next_state, mask = map(np.stack, zip(*batch))
         state = np.ascontiguousarray(state.flatten(), dtype=np.float32)
         action = np.ascontiguousarray(action.flatten(), dtype=np.float32)
-        reward_sum = np.ascontiguousarray(reward_sum.flatten(), dtype=np.float32)
+        reward = np.ascontiguousarray(reward.flatten(), dtype=np.float32)
+        next_state = np.ascontiguousarray(next_state.flatten(), dtype=np.float32)
+        mask = np.ascontiguousarray(mask.flatten(), dtype=np.float32)
         c_state = state.ctypes.data_as(ct.c_void_p)
         c_action = action.ctypes.data_as(ct.c_void_p)
-        c_reward_sum = reward_sum.ctypes.data_as(ct.c_void_p)
+        c_reward = reward.ctypes.data_as(ct.c_void_p)
+        c_next_state = next_state.ctypes.data_as(ct.c_void_p)
+        c_mask = mask.ctypes.data_as(ct.c_void_p)
         c_shmbuf = self.shmbuf.ctypes.data_as(ct.c_void_p)
         c_addinfo = self.addinfo.ctypes.data_as(ct.c_void_p)
-        self.dll.fill_batch_shm(c_shmbuf, c_addinfo, c_state, c_action, c_reward_sum)
+        self.dll.fill_batch_shm(c_shmbuf, c_addinfo, c_state, c_action, c_reward, c_next_state, c_mask)
 
         self.readcntlock.acquire()
         self.readcnt -= 1

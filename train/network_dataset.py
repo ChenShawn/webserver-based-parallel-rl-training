@@ -62,49 +62,69 @@ class NetworkDataset(object):
 
 
     def _read_shm(self, shmbuf, addinfo):
-        # prepare s, a, r buffers independently
+        # prepare buffers independently
         states = np.zeros((G.STATE_SIZE * G.BATCH_SIZE), dtype=np.float32)
         states = np.ascontiguousarray(states, dtype=states.dtype)
         c_states = states.ctypes.data_as(ct.c_void_p)
+
         actions = np.zeros((G.ACTION_SIZE * G.BATCH_SIZE), dtype=np.float32)
         actions = np.ascontiguousarray(actions, dtype=actions.dtype)
         c_actions = actions.ctypes.data_as(ct.c_void_p)
+
         rewards = np.zeros((G.BATCH_SIZE), dtype=np.float32)
         rewards = np.ascontiguousarray(rewards, dtype=rewards.dtype)
         c_rewards = rewards.ctypes.data_as(ct.c_void_p)
 
+        next_states = np.zeros((G.STATE_SIZE * G.BATCH_SIZE), dtype=np.float32)
+        next_states = np.ascontiguousarray(next_states, dtype=next_states.dtype)
+        c_next_states = next_states.ctypes.data_as(ct.c_void_p)
+
+        masks = np.zeros((G.BATCH_SIZE), dtype=np.float32)
+        masks = np.ascontiguousarray(masks, dtype=masks.dtype)
+        c_masks = masks.ctypes.data_as(ct.c_void_p)
+
         c_shmbuf = shmbuf.ctypes.data_as(ct.c_void_p)
         c_addinfo = addinfo.ctypes.data_as(ct.c_void_p)
-        self.dll.read_batch_shm(c_shmbuf, c_addinfo, c_states, c_actions, c_rewards)
+
+        self.dll.read_batch_shm(c_shmbuf, c_addinfo, c_states, c_actions, c_rewards, c_next_states, c_masks)
         states = np.reshape(states, [G.BATCH_SIZE] + list(G.STATE_SHAPE))
         actions = np.reshape(actions, [G.BATCH_SIZE] + list(G.ACTION_SHAPE))
-        return states, actions, rewards
+        next_states = np.reshape(next_states, [G.BATCH_SIZE] + list(G.STATE_SHAPE))
+        return states, actions, rewards, next_states, masks
 
 
     def get_batch_data(self):
         # use grequests to support large number of mempool server requests
         req_list = [grequests.get(url) for url in self.remote_url_list]
         ret_list = grequests.map(req_list)
-        state_list, action_list, reward_list = [], [], []
+        state_list, action_list, reward_list, next_state_list, mask_list = [], [], [], [], []
         for url, ret, buffer, addinfo in zip(self.remote_url_list, ret_list, self.buffer_list, self.addinfo_list):
             if ret.status_code != 200:
                 logger.error(f'remote {url} ret {ret}')
                 continue
-            state, action, reward_sum = self._read_shm(buffer, addinfo)
+            state, action, reward, next_state, mask = self._read_shm(buffer, addinfo)
+
             state_list.append(state)
             action_list.append(action)
-            reward_list.append(reward_sum)
+            reward_list.append(reward)
+            next_state_list.append(next_state)
+            mask_list.append(mask)
+
         state = np.concatenate(state_list, axis=0)
         action = np.concatenate(action_list, axis=0)
-        reward_sum = np.concatenate(reward_list, axis=0)
-        return state, action, reward_sum
+        reward = np.concatenate(reward_list, axis=0)
+        next_state = np.concatenate(next_state_list, axis=0)
+        mask = np.concatenate(mask_list, axis=0)
+        return state, action, reward, next_state, mask
 
 
 
 if __name__ == '__main__':
     # unit test: this is to test if the data passed through shm are correct
     network_dataset = NetworkDataset()
-    s, a, r = network_dataset.get_batch_data()
+    s, a, r, s_next, m = network_dataset.get_batch_data()
     print('state: ', s[0: 2, :], s.shape)
     print('action: ', a[0: 2, :], a.shape)
-    print('reward: ', r[:10])
+    print('reward: ', r[:10], r.shape)
+    print('s_next: ', s_next[0: 2, :], s_next.shape)
+    print('mask: ', m[: 10], m.shape)

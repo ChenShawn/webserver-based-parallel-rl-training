@@ -13,6 +13,7 @@ import global_variables as G
 from models import sac
 from network_dataset import NetworkDataset
 
+os.environ['CUDA_VISIBLE_DEVICES'] = '1'
 
 def get_arguments():
     parser = argparse.ArgumentParser(description='PyTorch Soft Actor-Critic Args')
@@ -27,8 +28,9 @@ def get_arguments():
     parser.add_argument('--hidden-size', type=int, default=G.HIDDEN_SIZE, help='hidden size')
     parser.add_argument('--max-episode-len', type=int, default=G.MAX_EPISODE_LEN, help='max episode len')
     parser.add_argument('--target-update-interval', type=int, default=G.TARGET_UPDATE_INTERVAL, help='Q-target update per steps')
+    parser.add_argument('--policy-update-interval', type=int, default=G.POLICY_UPDATE_INTERVAL, help='policy update per steps')
     parser.add_argument('--save-interval', type=int, default=G.SAVE_INTERVAL, help='Q-target update per steps')
-    parser.add_argument('--log-interval', type=int, default=100, help='interval to write tensorboard')
+    parser.add_argument('--log-interval', type=int, default=25, help='interval to write tensorboard')
     parser.add_argument('--replay-size', type=int, default=G.REPLAY_CAPACITY, help='size of replay buffer')
     return parser.parse_args()
 
@@ -64,7 +66,7 @@ def main():
                 tf.Summary.Value(tag='loss/qloss_2', simple_value=qf2_loss),
                 tf.Summary.Value(tag='loss/pi_loss', simple_value=policy_loss),
                 tf.Summary.Value(tag='agent/reward', simple_value=reward_mean),
-                tf.Summary.Value(tag='agent/negative_entropy', simple_value=negent),
+                tf.Summary.Value(tag='agent/entropy', simple_value=-negent),
             ])
             writer.add_summary(sumstr, global_step=total_it)
         if total_it % args.save_interval == 0:

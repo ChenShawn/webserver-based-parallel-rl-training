@@ -1,6 +1,8 @@
 set -x
 
 # step 0: generate configurations and replace variables in global_variables
+cd ./rollout/cpp/ && make && cd -
+cd ./train/cpp/ && make && cd -
 source ./distributed.config
 mempool_ports=`echo "${mempool_ports_raw}" | tr "," "\n"`
 sed -i "s/^SERVER_PORT_LIST.*=.*/SERVER_PORT_LIST = [${mempool_ports_raw}]/g" ./global_variables.py
@@ -29,6 +31,7 @@ sleep 30
 # step 3: start training
 cd ./train
 nohup python main.py >./logs/run.log 2>&1 &
+nohup tensorboard --logdir ./tensorboard >/dev/null 2>&1 &
 cd -
 
 echo " [*] all processes started to run, good luck for a good convergence :)"

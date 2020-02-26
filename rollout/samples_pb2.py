@@ -18,7 +18,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=b'\n\rsamples.proto\"K\n\x06Sample\x12\r\n\x05state\x18\x01 \x01(\x0c\x12\x0e\n\x06\x61\x63tion\x18\x02 \x01(\x0c\x12\x12\n\nreward_sum\x18\x03 \x01(\x02\x12\x0e\n\x06reward\x18\x04 \x01(\x02\"#\n\x07\x45pisode\x12\x18\n\x07samples\x18\x01 \x03(\x0b\x32\x07.Sampleb\x06proto3'
+  serialized_pb=b'\n\rsamples.proto\"Y\n\x06Sample\x12\r\n\x05state\x18\x01 \x01(\x0c\x12\x0e\n\x06\x61\x63tion\x18\x02 \x01(\x0c\x12\x0e\n\x06reward\x18\x03 \x01(\x02\x12\x12\n\nnext_state\x18\x04 \x01(\x0c\x12\x0c\n\x04mask\x18\x05 \x01(\x02\"#\n\x07\x45pisode\x12\x18\n\x07samples\x18\x01 \x03(\x0b\x32\x07.Sampleb\x06proto3'
 )
 
 
@@ -46,15 +46,22 @@ _SAMPLE = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='reward_sum', full_name='Sample.reward_sum', index=2,
+      name='reward', full_name='Sample.reward', index=2,
       number=3, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='reward', full_name='Sample.reward', index=3,
-      number=4, type=2, cpp_type=6, label=1,
+      name='next_state', full_name='Sample.next_state', index=3,
+      number=4, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='mask', full_name='Sample.mask', index=4,
+      number=5, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -72,7 +79,7 @@ _SAMPLE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=17,
-  serialized_end=92,
+  serialized_end=106,
 )
 
 
@@ -102,8 +109,8 @@ _EPISODE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=94,
-  serialized_end=129,
+  serialized_start=108,
+  serialized_end=143,
 )
 
 _EPISODE.fields_by_name['samples'].message_type = _SAMPLE

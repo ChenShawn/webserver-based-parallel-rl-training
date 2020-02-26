@@ -60,18 +60,7 @@ class DownloadThread(threading.Thread):
                         fd.write(chunk)
         else:
             self.flag_success = False
-            return self.flag_success
-        ret = requests.get(url + '/sac_critic_target.pth', stream=True)
-        if ret.status_code == 200:
-            with open(G.CRITIC_FILENAME, 'wb') as fd:
-                for chunk in ret.iter_content(chunk_size=128):
-                    if chunk:
-                        fd.write(chunk)
-        else:
-            self.flag_success = False
-            return self.flag_success
         self.flag_success = True
-        return self.flag_success
 
 
 class Worker(object):
@@ -81,7 +70,7 @@ class Worker(object):
         self.max_episode_len = G.MAX_EPISODE_LEN
         self.gamma = G.GAMMA
         self.num_samples, self.num_send, self.num_failed = 0, 0, 0
-        self.actor_md5sum, self.critic_md5sum = '', ''
+        self.actor_md5sum = ''
         ArgList = namedtuple('ArgList', 'lr hidden_size alpha policy')
         arglist = ArgList(lr=G.LR, hidden_size=G.HIDDEN_SIZE, alpha=G.ALPHA, policy=G.POLICY_TYPE)
         state_size = reduce(lambda x, y: x * y, G.STATE_SHAPE)
@@ -89,18 +78,17 @@ class Worker(object):
         logger.info('Worker initialized in {}'.format(socket.gethostbyname(socket.gethostname())))
 
 
-    def get_episode_data(self, reward_shaping=lambda x: x):
-        """get_random_episode_data
-            TODO: support multi-step Bellman error
+    def get_episode_data(self, reward_shaping=lambda x: float(x)):
+        """get_episode_data
             Get an episode of samples
-            return: [(s_0, a_0, R_0), (s_1, a_1, R_1), ...]
+            return: [(s_0, a_0, r_0, s_1, m_0), (s_1, a_1, r_1, s_2, m_1), ...]
         """
         s = self.env.reset()
         done, epilen = False, 0
-        states, actions, masks, rewards = [], [], [], []
+        states, actions, rewards, next_states, masks = [], [], [], [], []
         while not done:
             # self.env.render()
-            if os.path.exists(G.ACTOR_FILENAME) and os.path.exists(G.CRITIC_FILENAME):
+            if os.path.exists(G.ACTOR_FILENAME):
                 # if both ckpt files exist the models should have been loaded
                 a = self.agent.select_action(s)
             else:
@@ -109,29 +97,23 @@ class Worker(object):
             mask = 1 if epilen == self.max_episode_len else float(not done)
             states.append(s.astype(np.float32))
             actions.append(a.astype(np.float32))
-            masks.append(float(mask))
             rewards.append(reward_shaping(r))
+            next_states.append(s_next.astype(np.float32))
+            masks.append(float(mask))
             epilen += 1
             if epilen >= self.max_episode_len or done:
                 break
             s = s_next
-        reward_sum_list = []
-        next_states = states[1: ] + [s_next]
-        for s_next, m, r in zip(next_states, masks, rewards):
-            reward_sum = r + m * self.gamma * self.agent.get_value(s_next)
-            reward_sum_list.append(reward_sum)
-        logger.info('epilen={} reward_sum_mean={}'.format(len(states), np.array(rewards).mean()))
-        return states, actions, reward_sum_list
+        logger.info('epilen={} reward_sum={}'.format(len(states), np.array(rewards).sum()))
+        return states, actions, rewards, next_states, masks
 
 
     def check_reload(self):
         """check_reload"""
         actor_md5sum = md5sum(G.ACTOR_FILENAME)
-        critic_md5sum = md5sum(G.CRITIC_FILENAME)
-        if actor_md5sum != self.actor_md5sum and critic_md5sum != self.critic_md5sum:
-            self.agent.load_model(actor_path=G.ACTOR_FILENAME, critic_path=G.CRITIC_FILENAME)
+        if actor_md5sum != self.actor_md5sum:
+            self.agent.load_model(actor_path=G.ACTOR_FILENAME)
             self.actor_md5sum = actor_md5sum
-            self.critic_md5sum = critic_md5sum
             logger.info('new models confirmed and reload is now finished!')
         elif self.num_send % G.REQ_MODELS_INTERVAL == 0:
             # NOTE: large files can cause long delay
@@ -144,17 +126,21 @@ class Worker(object):
 
     def send_data(self):
         self.check_reload()
-        states, actions, rewards = self.get_episode_data()
+        states, actions, rewards, next_states, masks = self.get_episode_data()
         episode = pbfmt.Episode()
-        for s, a, r in zip(states, actions, rewards):
+        for s, a, r, s_next, m in zip(states, actions, rewards, next_states, masks):
             sample = episode.samples.add()
             # TODO: ONLY FOR DEBUG!!!
             # sample.state = np.arange(s.shape[0], dtype=np.float32).tobytes()
             # sample.action = np.arange(a.shape[0], dtype=np.float32).tobytes()
             # sample.reward_sum = 3.1415926
+            # sample.next_state = np.arange(s_next.shape[0], dtype=np.float32).tobytes()
+            # sample.mask = 1.0
             sample.state = s.tobytes()
             sample.action = a.tobytes()
-            sample.reward_sum = r
+            sample.reward = r
+            sample.next_state = s_next.tobytes()
+            sample.mask = m
         pbdata = episode.SerializeToString()
         remote = random.choice(self.send_list)
         ret = requests.post(remote, data=pbdata)

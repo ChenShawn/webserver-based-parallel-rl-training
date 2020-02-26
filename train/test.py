@@ -20,6 +20,7 @@ def parse_arguments():
     parser.add_argument("--train-seed", type=int, default=123456, help="random seed for training")
     parser.add_argument("--test-seed", type=int, default=1, help="random seed for testing")
     parser.add_argument("--render", action="store_true", default=False)
+    parser.add_argument("--sample", action="store_true", default=False)
     # RESERVED FIELD: DO NOT PASS VALUE TO THESE PARAMS FROM CMD
     parser.add_argument("--hidden-size", type=int, default=256, help="reserved field")
     parser.add_argument("--tau", type=float, default=0.1, help="reserved field")
@@ -74,7 +75,7 @@ def test(arglist):
             noise = np.random.normal(0.0, 1.0, size=state.shape)
             noise = np.clip(noise, -1.0, 1.0)
             adv_state = state + arglist.noise_scale * noise
-            action = agent.select_action(adv_state, eval=True)
+            action = agent.select_action(adv_state, eval=not arglist.sample)
             state, reward, done, _ = env.step(action)
             ep_reward += reward
             if render:

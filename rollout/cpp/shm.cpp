@@ -32,10 +32,11 @@ void init_shm(float* shmptr, int _shmsz, int _shmkey, int* additional) {
 }
 
 
-void fill_batch_shm(float* shmbuf, int* addinfo, float* state, float* action, float* reward_sum) {
+void fill_batch_shm(float* shmbuf, int* addinfo, float* state, float* action, 
+                    float* reward, float* next_state, float* mask) {
     int shmid = addinfo[0], offset = addinfo[1];
     int state_size = addinfo[2], action_size = addinfo[3], batch_size = addinfo[4];
-    int sample_size = state_size + action_size + 1;
+    int sample_size = state_size * 2 + action_size + 2;
     float* shm_start = (float*)((char*)shmbuf + offset);
     for (int i = 0; i < batch_size; i ++) {
         for (int j = 0; j < state_size; j ++) {
@@ -44,7 +45,36 @@ void fill_batch_shm(float* shmbuf, int* addinfo, float* state, float* action, fl
         for (int j = 0; j < action_size; j ++) {
             shm_start[i * sample_size + state_size + j] = action[i * action_size + j];
         }
-        shm_start[i * sample_size + state_size + action_size] = reward_sum[i];
+        shm_start[i * sample_size + state_size + action_size] = reward[i];
+        for (int j = 0; j < state_size; j ++) {
+            shm_start[i * sample_size + state_size + action_size + 1 + j] = next_state[j];
+        }
+        shm_start[i * sample_size + 2 * state_size + action_size + 1] = mask[i];
+    }
+}
+
+
+/****************************
+ * read_batch_shm: this can be seen as the reversed process of fill_batch_shm
+ * **************************/
+void read_batch_shm(float* shmbuf, int* addinfo, float* state, float* action, 
+                    float* reward, float* next_state, float* mask) {
+    int shmid = addinfo[0], offset = addinfo[1];
+    int state_size = addinfo[2], action_size = addinfo[3], batch_size = addinfo[4];
+    int sample_size = state_size + action_size + 1;
+    float* shm_start = (float*)((char*)shmbuf + offset);
+    for (int i = 0; i < batch_size; i ++) {
+        for (int j = 0; j < state_size; j ++) {
+            state[i * state_size + j] = shm_start[i * sample_size + j];
+        }
+        for (int j = 0; j < action_size; j ++) {
+            action[i * action_size + j] = shm_start[i * sample_size + state_size + j];
+        }
+        reward[i] = shm_start[i * sample_size + state_size + action_size];
+        for (int j = 0; j < state_size; j ++) {
+            next_state[j] = shm_start[i * sample_size + state_size + action_size + 1 + j];
+        }
+        mask[i] = shm_start[i * sample_size + 2 * state_size + action_size + 1];
     }
 }
 
