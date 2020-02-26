@@ -104,3 +104,14 @@ class SAC(object):
         torch.save(self.critic.state_dict(), critic_path)
         # NOTE: critic_target must be saved!
         torch.save(self.critic_target.state_dict(), critic_target_path)
+
+
+    # Load model parameters
+    def load_model(self, env_name):
+        actor_path = "./train/{}/sac_actor.pth".format(env_name)
+        critic_path = "./train/{}/sac_critic.pth".format(env_name)
+        critic_target_path = "./train/{}/sac_critic_target.pth".format(env_name)
+        self.policy.load_state_dict(torch.load(actor_path))
+        self.critic.load_state_dict(torch.load(critic_path))
+        self.critic_target.load_state_dict(torch.load(critic_target_path))
+

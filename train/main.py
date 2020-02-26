@@ -47,6 +47,9 @@ def main():
     dataset = NetworkDataset()
     set_global_seeds(env, args.seed)
 
+    if not os.path.exists('./train/{}'.format(args.env)):
+        os.makedirs('./train/{}'.format(args.env))
+
     logname  = './logs/{}.log'.format(args.env)
     logfmt = '%(levelname)s - %(asctime)s - %(message)s'
     logging.basicConfig(filename=logname, level=logging.ERROR, format=logfmt)

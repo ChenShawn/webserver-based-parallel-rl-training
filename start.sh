@@ -2,8 +2,8 @@ set -x
 
 # step 0: generate configurations and replace variables in global_variables
 source ./distributed.config
-mempool_ports=`echo "${mempool_ports_raw}" | awk -F, '{ print $1 }'`
-sed -i "s/^SERVER_PORT_LIST.*=.*/SERVER_PORT_LIST = [${mempool_ports_raw}]" ./global_variables.py
+mempool_ports=`echo "${mempool_ports_raw}" | tr "," "\n"`
+sed -i "s/^SERVER_PORT_LIST.*=.*/SERVER_PORT_LIST = [${mempool_ports_raw}]/g" ./global_variables.py
 
 # step 1: activate mempool servers
 for port in ${mempool_ports}
@@ -14,12 +14,12 @@ do
     cd -
 done
 
-# step 2: activate workers (if workers run on different machines u have to do this mannualy)
+# step 2: activate workers (if workers run on different machines you have to do this mannualy)
 worker_ending_index=`expr ${worker_num} - 1`
 for idx in `seq 0 ${worker_ending_index}`
 do
-    cp -r ./workers ./runnning_worker_${idx}
-    cd ./runnning_worker_${idx}
+    cp -r ./workers ./running_worker_${idx}
+    cd ./running_worker_${idx}
     nohup python worker.py >./logs/run.log 2>&1 &
     cd -
 done

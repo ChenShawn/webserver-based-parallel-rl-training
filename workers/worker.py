@@ -28,7 +28,10 @@ device = torch.device('cpu')
 def md5sum(filename):
     """md5sum
     Equivalent to the `md5sum` cmd in Linux shell
+    return empty str if file does not exist
     """
+    if not os.path.exists(filename):
+        return ''
     with open(filename, 'rb') as f:
         d = hashlib.md5()
         for buf in iter(partial(f.read, 128), b''):
@@ -101,7 +104,7 @@ class Worker(object):
                 # if both ckpt files exist the models should have been loaded
                 a = self.agent.select_action(s)
             else:
-                a = self.env.action_space.sample()[0]
+                a = self.env.action_space.sample()
             s_next, r, done, info = self.env.step(a)
             mask = 1 if epilen == self.max_episode_len else float(not done)
             states.append(s.astype(np.float32))
@@ -130,7 +133,7 @@ class Worker(object):
             self.actor_md5sum = actor_md5sum
             self.critic_md5sum = critic_md5sum
             logger.info('new models confirmed and reload is now finished!')
-        elif self.num_send % 20 == 0:
+        elif self.num_send % G.REQ_MODELS_INTERVAL == 0:
             # NOTE: large files can cause long delay
             # asynchronously requests mempool server for lastest models
             download_thread = DownloadThread()
@@ -140,19 +143,18 @@ class Worker(object):
 
 
     def send_data(self):
-        if os.path.exists(G.ACTOR_FILENAME) and os.path.exists(G.CRITIC_FILENAME):
-            self.check_reload()
+        self.check_reload()
         states, actions, rewards = self.get_episode_data()
         episode = pbfmt.Episode()
         for s, a, r in zip(states, actions, rewards):
             sample = episode.samples.add()
             # TODO: ONLY FOR DEBUG!!!
-            sample.state = np.arange(s.shape[0], dtype=np.float32).tobytes()
-            sample.action = np.arange(a.shape[0], dtype=np.float32).tobytes()
-            sample.reward_sum = 3.1415926
-            # sample.state = s.tobytes()
-            # sample.action = a.tobytes()
-            # sample.reward_sum = r
+            # sample.state = np.arange(s.shape[0], dtype=np.float32).tobytes()
+            # sample.action = np.arange(a.shape[0], dtype=np.float32).tobytes()
+            # sample.reward_sum = 3.1415926
+            sample.state = s.tobytes()
+            sample.action = a.tobytes()
+            sample.reward_sum = r
         pbdata = episode.SerializeToString()
         remote = random.choice(self.send_list)
         ret = requests.post(remote, data=pbdata)

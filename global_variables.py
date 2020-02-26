@@ -4,7 +4,8 @@ from functools import reduce
 
 
 # environmental parameters
-ENV_NAME = 'LunarLanderContinuous-v2'
+# ENV_NAME = 'LunarLanderContinuous-v2'
+ENV_NAME = 'Pendulum-v0'
 _env = gym.make(ENV_NAME)
 STATE_SHAPE = _env.observation_space.shape
 ACTION_SHAPE = _env.action_space.shape
@@ -26,13 +27,13 @@ TAU = 0.005
 ALPHA = 0.2
 NUM_STEPS = 1000001
 SEED = 123456
-TARGET_UPDATE_INTERVAL = 5
+TARGET_UPDATE_INTERVAL = 25
 SAVE_INTERVAL = 100
 
 
 # replay memory
 # NOTE: The following line will be modified by start.sh in the beginning
-SERVER_PORT_LIST = [20000]
+SERVER_PORT_LIST = [20000,20001]
 REPLAY_CAPACITY = 1e+6
 # NOTE: compute the smallest size that can contain a batch of samples and two more pages (4096)
 _num_float32 = reduce(lambda x, y: x * y, STATE_SHAPE) + reduce(lambda x, y: x * y, ACTION_SHAPE) + 1
@@ -54,6 +55,7 @@ MAX_EPISODE_LEN = 1000
 TRAINER_DLLNAME = 'libtrain.so'
 ACTOR_FILENAME = './train/sac_actor.pth'
 CRITIC_FILENAME = './train/sac_critic.pth'
+REQ_MODELS_INTERVAL = 20
 
 
 if __name__ == '__main__':

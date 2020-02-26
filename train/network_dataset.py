@@ -10,7 +10,7 @@ sys.path.append("..")
 import global_variables as G
 
 logfmt = '[%(levelname)s][%(asctime)s][%(filename)s][%(funcName)s][%(lineno)d] %(message)s'
-logging.basicConfig(filename='./logs/network_dataset.log', level=logging.ERROR, format=logfmt)
+logging.basicConfig(filename='./logs/network_dataset.log', level=logging.INFO, format=logfmt)
 logger = logging.getLogger(__name__)
 
 
@@ -86,8 +86,9 @@ class NetworkDataset(object):
         req_list = [grequests.get(url) for url in self.remote_url_list]
         ret_list = grequests.map(req_list)
         state_list, action_list, reward_list = [], [], []
-        for ret, buffer, addinfo in zip(ret_list, self.buffer_list, self.addinfo_list):
+        for url, ret, buffer, addinfo in zip(self.remote_url_list, ret_list, self.buffer_list, self.addinfo_list):
             if ret.status_code != 200:
+                logger.error(f'remote {url} ret {ret}')
                 continue
             state, action, reward_sum = self._read_shm(buffer, addinfo)
             state_list.append(state)
