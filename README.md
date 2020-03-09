@@ -13,6 +13,12 @@ Still on developing...
 
 ## Usage
 
+Compile C++ brpc version of rollout server:
+```bash
+cd rollout/cpp/ && make brpc
+```
+This will create a folder named `./rollout/cpp/bld/`, with the binary executable `mempool_server` in it.
+
 Start training:
 ```bash
 # NOTE: Use `bash` to activate the scripts instead of `sh`, which is a link of dash and may have potential bugs

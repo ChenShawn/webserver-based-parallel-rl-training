@@ -1,0 +1,55 @@
+syntax = "proto2";
+option cc_generic_services = true;
+
+/******************* REQUEST PACKAGES ***************/
+
+message Sample {
+  repeated float state                  = 1 [packed = true];
+  repeated float action                 = 2 [packed = true];
+  required float reward                 = 3 [default = 0.0];
+  repeated float next_state             = 4 [packed = true];
+  optional float mask                   = 5 [default = 1.0];
+}
+
+message Episode {
+  repeated Sample samples               = 1;
+  optional int32 worker_id              = 2;
+}
+
+message EmptyRequest {
+  optional int32 placeholder            = 1;
+}
+
+message ReadRequest {
+  optional int32 batch_size             = 1;
+}
+
+/******************* RESPONSE PACKAGES ***************/
+
+message StatusResponse {
+  required int32 status                 = 1;
+  optional string error_text            = 2;
+}
+
+message ShmInfoResponse {
+  required int32 shmid                  = 1;
+  optional int32 offset                 = 2;
+}
+
+message StatInfoResponse {
+  required int64 num_samples            = 1;
+  required int32 num_reads              = 2;
+  required int32 num_writes             = 3;
+}
+
+
+/******************* RPC SERVICES ****************/
+service MempoolService {
+  rpc HelloWorld(EmptyRequest) returns (StatusResponse);
+  rpc SaveSamples(Episode) returns (StatusResponse);
+  rpc ReadSamples(ReadRequest) returns (StatusResponse);
+  rpc CloseShmBuffer(EmptyRequest) returns (StatusResponse);
+
+  rpc GetStatInfo(EmptyRequest) returns (StatInfoResponse);
+  rpc GetShmInfo(EmptyRequest) returns (ShmInfoResponse);
+}
