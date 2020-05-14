@@ -1,29 +1,15 @@
 import gym
 import requests
-import google.protobuf
 import numpy as np
 import sys, os
 import random
 import time
-import logging
 import torch
 import hashlib
-from functools import partial, reduce
 from collections import namedtuple
-import socket
-import threading
-sys.path.append("..")
+import ctypes as ct
 
-import global_variables as G
-import samples_pb2 as pbfmt
 from models import sac
-
-
-logfmt = '[%(levelname)s][%(asctime)s][%(filename)s][%(funcName)s][%(lineno)d] %(message)s'
-logging.basicConfig(filename='./logs/async_workers_rpc.log', level=logging.INFO, format=logfmt)
-logger = logging.getLogger(__name__)
-device = torch.device('cpu')
-
 
 def md5sum(filename):
     """md5sum
@@ -39,138 +25,122 @@ def md5sum(filename):
     return d.hexdigest()
 
 
-class DownloadThread(threading.Thread):
-    """DownloadThread
-    Models saving are running asynchronously to avoid long IO wait and delay
-    TODO: Requesting with stream=True avoid loading large file into memory at once.
-    However, when calling iter_content the remote file may have been modified,
-    resulting in empty or error model files.
-    """
-    def __init__(self):
-        super(DownloadThread, self).__init__()
-        self.flag_success = False
-
-    def run(self):
-        url = random.choice(G.MEMPOOL_SERVER_LIST) + '/send_model'
-        ret = requests.get(url + '/sac_actor.pth', stream=True)
-        if ret.status_code == 200:
-            with open(G.ACTOR_FILENAME, 'wb') as fd:
-                for chunk in ret.iter_content(chunk_size=128):
-                    if chunk:
-                        fd.write(chunk)
-        else:
-            self.flag_success = False
-        self.flag_success = True
+def get_pointer_from_array(arr):
+    arr = arr.flatten().astype(np.float32)
+    if not arr.flags['C_CONTIGUOUS']:
+        arr = np.ascontiguousarray(arr)
+    return arr.ctypes.data_as(ct.c_void_p)
 
 
 class Worker(object):
-    def __init__(self):
-        self.env = gym.make(G.ENV_NAME)
-        self.send_list = [addr + '/save' for addr in G.MEMPOOL_SERVER_LIST]
-        self.max_episode_len = G.MAX_EPISODE_LEN
-        self.gamma = G.GAMMA
-        self.num_samples, self.num_send, self.num_failed = 0, 0, 0
+    def __init__(self, args, index=0):
+        self.index = index
+        self.env = gym.make(args.envname)
+        self.args = args
+        self.num_samples, self.num_send = 0, 0
         self.actor_md5sum = ''
         ArgList = namedtuple('ArgList', 'lr hidden_size alpha policy')
-        arglist = ArgList(lr=G.LR, hidden_size=G.HIDDEN_SIZE, alpha=G.ALPHA, policy=G.POLICY_TYPE)
-        state_size = reduce(lambda x, y: x * y, G.STATE_SHAPE)
-        self.agent = sac.SAC(num_inputs=state_size, action_space=self.env.action_space, args=arglist)
-        logger.info('Worker initialized in {}'.format(socket.gethostbyname(socket.gethostname())))
+        self.agent = sac.SAC(
+            num_inputs=args.state_size, 
+            action_space=self.env.action_space, 
+            args=ArgList(
+                lr=args.lr, 
+                hidden_size=args.hidden_size, 
+                alpha=args.alpha, 
+                policy=args.policy
+            )
+        )
+        print(f' [*] Model SAC {args.policy} initialized!!')
+        # initialize dynamic libraries
+        basedir = os.path.dirname(os.path.abspath(__file__))
+        self.dll = np.ctypeslib.load_library(os.path.join(basedir, args.dllname), '.')
+        self.dll.init_channel(
+            get_pointer_from_array(np.fromstring(args.remote_addr, dtype=np.uint8)),
+            ct.c_int(args.timeout_ms),
+            ct.c_int(args.max_retry)
+        )
+        print('Worker {} dll initialized!!'.format(index))
 
 
     def get_episode_data(self, reward_shaping=lambda x: float(x)):
         """get_episode_data
             Get an episode of samples
-            return: [(s_0, a_0, r_0, s_1, m_0), (s_1, a_1, r_1, s_2, m_1), ...]
+            return: type numpy.ndarray [s, a, r, s_next, mask]
         """
         s = self.env.reset()
         done, epilen = False, 0
         states, actions, rewards, next_states, masks = [], [], [], [], []
         while not done:
             # self.env.render()
-            if os.path.exists(G.ACTOR_FILENAME):
+            if os.path.exists(self.args.actor_name):
                 # if both ckpt files exist the models should have been loaded
                 a = self.agent.select_action(s)
             else:
                 a = self.env.action_space.sample()
             s_next, r, done, info = self.env.step(a)
-            mask = 1 if epilen == self.max_episode_len else float(not done)
-            states.append(s.astype(np.float32))
-            actions.append(a.astype(np.float32))
+            mask = 1 if epilen == self.args.max_episode_len else float(not done)
+            states.append(s[None, :])
+            actions.append(a[None, :])
             rewards.append(reward_shaping(r))
-            next_states.append(s_next.astype(np.float32))
+            next_states.append(s_next[None, :])
             masks.append(float(mask))
             epilen += 1
-            if epilen >= self.max_episode_len or done:
+            if epilen >= self.args.max_episode_len or done:
                 break
             s = s_next
         logger.info('epilen={} reward_sum={}'.format(len(states), np.array(rewards).sum()))
+        states = np.concatenate(states, axis=0)
+        actions = np.concatenate(actions, axis=0)
+        rewards = np.array(rewards, dtype=np.float32)
+        masks = np.array(masks, dtype=np.float32)
         return states, actions, rewards, next_states, masks
 
 
     def check_reload(self):
         """check_reload"""
-        actor_md5sum = md5sum(G.ACTOR_FILENAME)
+        actor_md5sum = md5sum(self.args.actor_name)
         if actor_md5sum != self.actor_md5sum:
-            self.agent.load_model(actor_path=G.ACTOR_FILENAME)
+            self.agent.load_model(actor_path=self.args.actor_name)
             self.actor_md5sum = actor_md5sum
             logger.info('new models confirmed and reload is now finished!')
-        elif self.num_send % G.REQ_MODELS_INTERVAL == 0:
+        elif self.num_send % self.args.req_models_interval == 0:
             # NOTE: large files can cause long delay
             # asynchronously requests mempool server for lastest models
-            download_thread = DownloadThread()
-            download_thread.start()
-            return download_thread.flag_success
+            self.dll.download_model_files()
         return True
 
 
     def send_data(self):
         self.check_reload()
         states, actions, rewards, next_states, masks = self.get_episode_data()
-        episode = pbfmt.Episode()
-        for s, a, r, s_next, m in zip(states, actions, rewards, next_states, masks):
-            sample = episode.samples.add()
-            # TODO: ONLY FOR DEBUG!!!
-            # sample.state = np.arange(s.shape[0], dtype=np.float32).tobytes()
-            # sample.action = np.arange(a.shape[0], dtype=np.float32).tobytes()
-            # sample.reward_sum = 3.1415926
-            # sample.next_state = np.arange(s_next.shape[0], dtype=np.float32).tobytes()
-            # sample.mask = 1.0
-            sample.state = s.tobytes()
-            sample.action = a.tobytes()
-            sample.reward = r
-            sample.next_state = s_next.tobytes()
-            sample.mask = m
-        pbdata = episode.SerializeToString()
-        remote = random.choice(self.send_list)
-        ret = requests.post(remote, data=pbdata)
-        if ret.status_code != 200:
-            logger.error("remote response error: " + str(ret))
-            self.num_failed += 1
-            return False
-        self.num_samples += len(rewards)
+        self.dll.send_rpc_request(
+            ct.c_int(states.shape[0]),
+            ct.c_int(self.args.state_size),
+            ct.c_int(self.args.action_size),
+            get_pointer_from_array(states),
+            get_pointer_from_array(actions),
+            get_pointer_from_array(rewards),
+            get_pointer_from_array(next_states),
+            get_pointer_from_array(masks)
+        )
+        self.num_samples += states.shape[0]
         return True
 
 
     def run(self):
         # TODO: support dynamic maintainance of mempool server
         while True:
-            # if self.num_failed > 20:
-            #     logger.error('error time reaches maximum threshold')
-            #     break
-            # try:
-            #     self.send_data()
-            #     self.num_send += 1
-            # except Exception as err:
-            #     logger.error('Error: ' + str(err))
-            #     self.num_failed += 1
-            #     continue
             self.send_data()
             self.num_send += 1
-        exit(-1)
+        return True
+
+
+    def close(self):
+        self.dll.close_channel()
 
 
 
 if __name__ == '__main__':
     worker = Worker()
     worker.run()
+    worker.close()

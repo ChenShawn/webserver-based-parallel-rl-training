@@ -10,7 +10,10 @@
 
 DEFINE_int32(port, 20000, "TCP Port of this server");
 DEFINE_int32(idle_timeout_s, -1, "Connection will be closed if there is no "
-             "read/write operations during the last `idle_timeout_s`");
+             "read/write operations during the last `idle_timeout_s`. "
+             "By default set as -1 don't close any connection");
+DEFINE_string(actor_name, "/home/yuki/Documents/mycode/micro-wookong/train/train/Pendulum-v0/sac_actor.pth",
+              "Directory of the actor model file");
 DEFINE_int32(batch_size, 512, "batch size for mempool reading operations");
 DEFINE_int32(state_size, 12, "total dimension of state features");
 DEFINE_int32(action_size, 4, "total dimension of actions");
@@ -90,8 +93,11 @@ int ReplayMemory<DType>::sample(int batch_size) {
     if (batch_size > FLAGS_batch_size) {
         batch_size = FLAGS_batch_size;
     }
-    if (batch_size >= this->get_size()) {
-        LOG(WARNING) << "Trying to read samples when mempool is not sufficiently filled";
+    int cursize = this->get_size();
+    if (batch_size >= cursize) {
+        LOG(ERROR) << "Trying to read a samples of batch_size="
+                   << batch_size << " but replay memory has size="
+                   << cursize;
         return -1;
     }
     int sample_size = FLAGS_state_size * 2 + FLAGS_action_size + 2;
@@ -151,8 +157,8 @@ public:
     }
 
     virtual void SaveSamples(google::protobuf::RpcController* cntl_base,
-                             const Episode* episode,
-                             StatusResponse* response, 
+                             const ::DRL::Episode* episode,
+                             ::DRL::StatusResponse* response, 
                              google::protobuf::Closure* done) {
         brpc::ClosureGuard done_guard(done);
         brpc::Controller* cntl = static_cast<brpc::Controller*>(cntl_base);
@@ -163,8 +169,8 @@ public:
     }
 
     virtual void ReadSamples(google::protobuf::RpcController* cntl_base,
-                             const ReadRequest* request,
-                             StatusResponse* response,
+                             const ::DRL::ReadRequest* request,
+                             ::DRL::StatusResponse* response,
                              google::protobuf::Closure* done) {
         brpc::ClosureGuard done_guard(done);
         brpc::Controller* cntl = static_cast<brpc::Controller*>(cntl_base);
@@ -179,8 +185,8 @@ public:
     }
 
     virtual void CloseShmBuffer(google::protobuf::RpcController* cntl_base,
-                                const ::EmptyRequest* request,
-                                ::StatusResponse* response,
+                                const ::DRL::EmptyRequest* request,
+                                ::DRL::StatusResponse* response,
                                 ::google::protobuf::Closure* done) {
         brpc::ClosureGuard done_guard(done);
         brpc::Controller* cntl = static_cast<brpc::Controller*>(cntl_base);
@@ -194,8 +200,8 @@ public:
     }
 
     virtual void GetStatInfo(google::protobuf::RpcController* cntl_base,
-                             const ::EmptyRequest* request,
-                             ::StatInfoResponse* response,
+                             const ::DRL::EmptyRequest* request,
+                             ::DRL::StatInfoResponse* response,
                              ::google::protobuf::Closure* done) {
         brpc::ClosureGuard done_guard(done);
         brpc::Controller* cntl = static_cast<brpc::Controller*>(cntl_base);
@@ -206,14 +212,45 @@ public:
     }
 
     virtual void GetShmInfo(google::protobuf::RpcController* cntl_base,
-                            const ::EmptyRequest* request,
-                            ::ShmInfoResponse* response,
+                            const ::DRL::EmptyRequest* request,
+                            ::DRL::ShmInfoResponse* response,
                             ::google::protobuf::Closure* done) {
         brpc::ClosureGuard done_guard(done);
         brpc::Controller* cntl = static_cast<brpc::Controller*>(cntl_base);
         response->set_shmid(this->mem_ptr->get_shmid());
         response->set_offset(0);
         LOG(DEBUG) << "Receive GetShmInfo request from " << cntl->remote_side();
+    }
+
+    virtual void DownloadModelFiles(google::protobuf::RpcController* cntl_base,
+                        const ::DRL::EmptyRequest* request,
+                        ::DRL::StatusResponse* response,
+                        ::google::protobuf::Closure* done) {
+        brpc::ClosureGuard done_guard(done);
+        brpc::Controller* cntl = static_cast<brpc::Controller*>(cntl_base);
+        FILE *fin = NULL;
+        size_t fsize = 0;
+        fin = fopen(FLAGS_actor_name, "rb");
+        if (fin == NULL) {
+            LOG(ERROR) << "Local model file [" << FLAGS_actor_name << "] does not existed";
+            response->set_status(500);
+            response->set_error_text("Local model file does not existed!");
+        } else {
+            fseek(fin, 0, SEEK_END);
+            fsize = ftell(fin);
+            rewind(fin);
+            char *tmpbuf = (char*)malloc(fsize);
+            if (fsize <= 0 || tmpbuf == NULL) {
+                LOG(ERROR) << "BadAlloc when trying to allocate " << fsize << " bytes";
+                fclose(fin);
+                return;
+            } else {
+                fread(tmpbuf, 1, fsize, fin);
+                fclose(fin);
+            }
+            cntl->response_attachment().append(tmpbuf, fsize);
+            response->set_status(200);
+        }
     }
 
 private:

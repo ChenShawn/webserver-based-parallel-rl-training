@@ -38,8 +38,10 @@ public:
     ~ReplayMemory();
 
     int push(const Episode* episode);
+    // Don't use networking for sampling. It's so fucking stupid!
     int sample(int batch_size);
     int close();
+
     inline int get_size() const { return size.load(); }
     inline int get_num_read() const { return num_read.load(); }
     inline int get_num_write() const { return num_write.load(); }

@@ -1,4 +1,8 @@
 syntax = "proto2";
+package DRL;
+
+// Necessary for brpc
+// 告诉protoc要生成C++ Service基类
 option cc_generic_services = true;
 
 /******************* REQUEST PACKAGES ***************/
@@ -52,4 +56,5 @@ service MempoolService {
 
   rpc GetStatInfo(EmptyRequest) returns (StatInfoResponse);
   rpc GetShmInfo(EmptyRequest) returns (ShmInfoResponse);
+  rpc DownloadModelFiles(EmptyRequest) returns (StatusResponse);
 }

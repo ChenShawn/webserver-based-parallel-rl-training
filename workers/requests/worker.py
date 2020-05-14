@@ -15,7 +15,7 @@ import threading
 sys.path.append("..")
 
 import global_variables as G
-import samples_pb2 as pbfmt
+import .samples_pb2 as pbfmt
 from models import sac
 
 
